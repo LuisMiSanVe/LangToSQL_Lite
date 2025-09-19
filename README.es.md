@@ -1,70 +1,44 @@
-> [Ver en ingles/See in english](https://github.com/LuisMiSanVe/template-repos/blob/main/README.md)
-# 😀 Titulo del Repositorio
-[![image](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=csharp&logoColor=white)](https://dotnet.microsoft.com/en-us/languages/csharp)
-[![image](https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white)](https://dotnet.microsoft.com/en-us/learn/dotnet/what-is-dotnet)
-[![image](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![image](https://img.shields.io/badge/json-5E5C5C?style=for-the-badge&logo=json&logoColor=white)](https://www.newtonsoft.com/json)
-[![image](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=white)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
-[![image](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://aistudio.google.com/app/apikey)
-[![image](https://img.shields.io/badge/Visual_Studio-5C2D91?style=for-the-badge&logo=visual%20studio&logoColor=white)](https://visualstudio.microsoft.com/)
-[![image](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)](https://jwt.io/introduction)
-[![image](https://img.shields.io/badge/apache%20netbeans-1B6AC6?style=for-the-badge&logo=apache%20netbeans%20IDE&logoColor=white)](https://netbeans.apache.org/front/main/index.html)
+> [Ver en ingles/See in english](https://github.com/LuisMiSanVe/GeminiLiteSQL/tree/main)
+
+<img src="https://github.com/LuisMiSanVe/LuisMiSanVe/blob/main/Resources/GeminiPostSQL/GeminiLiteSQL_banner.png" style="width: 100%; height: auto;" alt="GeminiLiteSQL Banner">
+
+# <img src="" width="40" alt="Logo de GeminiLiteSQL"> GeminiLiteSQL | Aplicación Asistido por IA para SQLite
 [![image](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
-[![image](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
-[![image](https://img.shields.io/badge/Xampp-F37623?style=for-the-badge&logo=xampp&logoColor=white)](https://www.apachefriends.org/es/index.html)
-[![image](https://img.shields.io/badge/Apache-D22128?style=for-the-badge&logo=Apache&logoColor=white)](https://httpd.apache.org/)
-[![image](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
-[![image](https://img.shields.io/badge/Visual_Studio_Code-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)](https://code.visualstudio.com/)
-[![image](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white)]()
-[![image](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
-[![image](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)](https://console.firebase.google.com/)
-[![image](https://img.shields.io/badge/Android_Studio-3DDC84?style=for-the-badge&logo=android-studio&logoColor=white)](https://developer.android.com/studio)
 [![image](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/studio)
-[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white)](https://pytorch.org/)
-[![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)](https://numpy.org/)
-[![Jupyter Notebook](https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white)](https://jupyter.org/)
+[![image](https://img.shields.io/badge/json-5E5C5C?style=for-the-badge&logo=json&logoColor=white)](https://www.newtonsoft.com/json)
+[![image](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://aistudio.google.com/app/apikey)
+[![image](https://img.shields.io/badge/Android_Studio-3DDC84?style=for-the-badge&logo=android-studio&logoColor=white)](https://developer.android.com/studio)
 
 >[!NOTE]
-> NOTA
+> Dale un vistazo a las otras versiones del programa:
+>- [WinForms](https://github.com/LuisMiSanVe/GeminiPostSQL/tree/main)
+>- [REST API](https://github.com/LuisMiSanVe/GeminiPostSQL_API/tree/main)
+>- [ChatBot](https://github.com/LuisMiSanVe/GeminiPostSQL_ChatBot/tree/main)
+>- [NuGet](https://github.com/LuisMiSanVe/GeminiPostSQL_NuGet/tree/main)
 
-> [!WARNING]
-> ADVERTENCIA
-
-> ANOTACION
-
-DESCRIPCION BREVE
-
-<img src="https://github.com/LuisMiSanVe/LuisMiSanVe/blob/main/Resources/ShopManager/image.png" width="50" alt="Alt de Imagen">
-
-```
-CODIGO
-```
-
-## 📝 Explicación de Tecnología
-Explicacion
+Esta App usa la IA de Google 'Gemini 2.0 Flash' para generar consultas a bases de datos SQLite.  
+La IA convierte lenguaje natural a consultas SQL usando un método con sus ventajas y desventajas.
 
 ## 📋 Prerequisitos
-Prerequisitos
+Para que el programa funcione, necesiatarás una base de datos SQLite y una clave de la API de Gemini.
 
 ## 🛠️ Instalación
-Instalación
+Obten tu clave de la API de Gemini yendo aquí: [Google AI Studio](https://aistudio.google.com/app/apikey). Asegúrate de tener tu sesión de Google abierta, y entonces dale al botón que dice 'Crear clave de API' y sigue los pasos para crear tu proyecto de Google Cloud y conseguir tu clave de API. **Guárdala en algún sitio seguro**.  
+Google permite el uso gratuito de esta API sin añadir ninguna forma de pago, pero con algunas limitaciones.
 
-## ⚙️ Explicación de uso del proyecto
-Uso
+En Google AI Studio, puedes monitorizar el uso de la IA haciendo clic en 'Ver datos de uso' en la columna de 'Plan' en la tabla con todos tus proyectos. Recomiendo monitorizarla desde la pestaña de 'Cuota y límites del sistema' y ordenando por 'Porcentaje de uso actual', ya que es donde más información obtienes.
 
-## 📖 Sobre el proyecto
-Sobre
+Ya tienes todo lo que necesitas para hacer funcionar el programa.  
+Simplemente pon los datos que acabas de conseguir en las pantallas de configuración del programa.
 
-## 📂 Archivos
-Archivos
-
-## 🎨 Opciones de Personalización
-Opciones
+## 📖 Sobre la aplicación
+**[Método de traducción de Lenguaje Natural a SQL:](https://gist.github.com/LuisMiSanVe/2da8e2d932a06ef408b3ee8468d0d820)**  
+Este método mapea la estructura de la base de datos en un JSON que Gemini analiza ([con este prompt](https://gist.github.com/LuisMiSanVe/b189c8920d2dcedf5fd46485f3403d51)) para crear una consulta SQL, la cual es ejecutada en la base de datos SQLite directamente.  
+Ya que este método no mapea los valores de la base de datos el uso de tokens es menor, y los datos que devuelve son mas fiables pues es el mismo Servidor el que los devuelve. Sin embargo, no evita completamente los errores que cometa la IA. A veces, la consulta SQL fallará debido a que la IA inventa columnas que no existen, en ese caso deberás comprobar la consulta generada para que identifiques el fallo.
 
 ## 🚀 Lanzamientos
 Una versión será lanzada solo cuando se cumplan los siguientes puntos:\
-Nuevas funciones importantes y arreglos de fallos criticos causarán la salida inmediata de una nueva versión, mientras que otros cambios/arreglos menores deberán esperar una semana desde que se incluyeron en el repositorio antes de ser incluidos en la nueva versión, para que otros posibles cambios puedan ser añadidos tambien.
+Nuevas funciones importantes y arreglos de fallos criticos causarán la salida inmediata de una nueva versión, mientras que otros cambios o arreglos menores deberán esperar una semana desde que se incluyeron en el repositorio antes de ser incluidos en la nueva versión, para que otros posibles cambios puedan ser añadidos también.
 >[!NOTE]
 >Estos posibles nuevos cambios no alargarán la espera de la salida de la nueva versión a más de una semana.
 
@@ -72,12 +46,9 @@ El número de la versión seguirá este formato: \
 \[Añadido Importante\].\[Añadido Menor\].\[Arreglos de Errores\]
 
 ## 💻 Tecnologías usadas
-- Lenguaje de programación: [C#](https://dotnet.microsoft.com/en-us/languages/csharp) [Java](https://www.java.com/) [PHP](https://www.php.net/) [Python](https://www.python.org/)
-- Probado en: [Ubuntu](https://ubuntu.com/)
-- Framework: [ASP.NET Core](https://dotnet.microsoft.com/en-us/apps/aspnet) (Project built with [.Net](https://dotnet.microsoft.com/en-us/learn/dotnet/what-is-dotnet) Framework)
-- Plantilla: Empty Views Activity
-- API de Android:
-- Librerías:
-- Paquetes NuGet:
+- Lenguaje de programación: [Java](https://www.java.com/)
 - Otros:
-- IDE Recomendado: [Visual Studio](https://visualstudio.microsoft.com/) [NetBeans](https://netbeans.apache.org/front/main/index.html) [VS Code](https://code.visualstudio.com/) [Gedit](https://help.gnome.org/users/gedit/stable/gedit-quickstart.html.en) [Android Studio](https://developer.android.com/studio)
+  - [SQLite](https://sqlite.org/) 
+  - Gemini API Key (2.0 Flash)
+  - [FreeIcons](https://freeicons.io/) (Fuente original de los iconos, luego retocados por mí)
+- IDE Recomendado: [Android Studio](https://developer.android.com/studio)
