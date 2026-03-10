@@ -1,8 +1,8 @@
-> [Ver en ingles/See in english](https://github.com/LuisMiSanVe/GeminiLiteSQL/tree/main)
+> [Ver en ingles/See in english](https://github.com/LuisMiSanVe/LangToSQLLite/tree/main)
 
-<img src="https://github.com/LuisMiSanVe/LuisMiSanVe/blob/main/Resources/GeminiPostSQL/GeminiLiteSQL_banner.png" style="width: 100%; height: auto;" alt="GeminiLiteSQL Banner">
+<img src="https://github.com/LuisMiSanVe/LuisMiSanVe/blob/main/Resources/LangToSQL/LangToSQLLite_banner.png" style="width: 100%; height: auto;" alt="LangToSQL Lite Banner">
 
-# <img src="" width="40" alt="Logo de GeminiLiteSQL"> GeminiLiteSQL | Aplicación Asistido por IA para SQLite
+# <img src="" width="40" alt="Logo de LangToSQL Lite"> LangToSQL Lite | Aplicación Asistido por IA para SQLite
 [![image](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
 [![image](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/studio)
 [![image](https://img.shields.io/badge/json-5E5C5C?style=for-the-badge&logo=json&logoColor=white)](https://www.newtonsoft.com/json)
@@ -11,10 +11,11 @@
 
 >[!NOTE]
 > Dale un vistazo a las otras versiones del programa:
->- [WinForms](https://github.com/LuisMiSanVe/GeminiPostSQL/tree/main)
->- [REST API](https://github.com/LuisMiSanVe/GeminiPostSQL_API/tree/main)
->- [ChatBot](https://github.com/LuisMiSanVe/GeminiPostSQL_ChatBot/tree/main)
->- [NuGet](https://github.com/LuisMiSanVe/GeminiPostSQL_NuGet/tree/main)
+>- [WinForms](https://github.com/LuisMiSanVe/LangToSQL/tree/main)
+>- [REST API](https://github.com/LuisMiSanVe/LangToSQL_API/tree/main)
+>- [ChatBot](https://github.com/LuisMiSanVe/LangToSQL_ChatBot/tree/main)
+>- [NuGet](https://github.com/LuisMiSanVe/LangToSQL_NuGet/tree/main)
+>- [LLM](https://github.com/LuisMiSanVe/LangToSQL_LLM/tree/main)
 
 Esta App usa la IA de Google 'Gemini 2.0 Flash' para generar consultas a bases de datos SQLite.  
 La IA convierte lenguaje natural a consultas SQL usando un método con sus ventajas y desventajas.
@@ -23,6 +24,8 @@ La IA convierte lenguaje natural a consultas SQL usando un método con sus venta
 Para que el programa funcione, necesiatarás una base de datos SQLite y una clave de la API de Gemini.
 
 ## 🛠️ Instalación
+Puedes usar o bien una clave de API de Gemini o un servidor local de LLM, para ello recomiendo [LM Studio](https://lmstudio.ai/).
+
 Obten tu clave de la API de Gemini yendo aquí: [Google AI Studio](https://aistudio.google.com/app/apikey). Asegúrate de tener tu sesión de Google abierta, y entonces dale al botón que dice 'Crear clave de API' y sigue los pasos para crear tu proyecto de Google Cloud y conseguir tu clave de API. **Guárdala en algún sitio seguro**.  
 Google permite el uso gratuito de esta API sin añadir ninguna forma de pago, pero con algunas limitaciones.
 
@@ -49,6 +52,9 @@ El número de la versión seguirá este formato: \
 - Lenguaje de programación: [Java](https://www.java.com/)
 - Otros:
   - [SQLite](https://sqlite.org/) 
+  - [LM Studio](https://lmstudio.ai/)
   - Gemini API Key (2.0 Flash)
-  - [FreeIcons](https://freeicons.io/) (Fuente original de los iconos, luego retocados por mí)
+- Imagenes (Fuente original de los iconos, luego retocados por mí):
+    - [FreeIcons](https://freeicons.io/)
+    - [Depositphotos](https://depositphotos.com/vector/coarse-halftone-dots-pattern-gradient-in-vector-format-82396024.html)
 - IDE Recomendado: [Android Studio](https://developer.android.com/studio)
