@@ -2,7 +2,7 @@
 
 <img src="https://github.com/LuisMiSanVe/LuisMiSanVe/blob/main/Resources/LangToSQL/LangToSQLLite_banner.png" style="width: 100%; height: auto;" alt="LangToSQL Lite Banner">
 
-# <img src="https://github.com/LuisMiSanVe/LangToSQL_Lite/tree/main/LangToSQL/app/src/main/res/drawable/logo.png" width="40" alt="Logo de LangToSQL Lite"> LangToSQL Lite | Aplicación Asistida por IA para SQLite
+# <img src="https://github.com/LuisMiSanVe/LangToSQL_Lite/blob/main/LangToSQL/app/src/main/res/drawable/logo.png" width="40" alt="Logo de LangToSQL Lite"> LangToSQL Lite | Aplicación Asistida por IA para SQLite
 [![image](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
 [![image](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/studio)
 [![image](https://img.shields.io/badge/json-5E5C5C?style=for-the-badge&logo=json&logoColor=white)](https://www.newtonsoft.com/json)
