@@ -1,15 +1,12 @@
 package com.luismisanve.langtosql.ui.maps;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
+import android.view.*;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
+import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentMapsBinding;
 
 public class MapsFragment extends Fragment {
@@ -24,8 +21,12 @@ public class MapsFragment extends Fragment {
         binding = FragmentMapsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textMaps;
-        mapsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        ImageButton button = root.findViewById(R.id.mapButton);
+
+        button.setOnClickListener(v -> {
+            // Map
+        });
+
         return root;
     }
 

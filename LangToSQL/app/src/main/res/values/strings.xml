@@ -3,4 +3,18 @@
     <string name="title_run">Run</string>
     <string name="title_maps">Maps</string>
     <string name="title_config">Config</string>
+    <string name="hint_run">Request…</string>
+    <string name="hint_file">SQLite database file…</string>
+    <string name="title_db">Database settings</string>
+    <string name="title_ai">AI settings</string>
+    <string name="hint_ip">IP Address…</string>
+    <string name="hint_port">Port…</string>
+    <string name="radio_SQLite">Use local SQLite database file</string>
+    <string name="radio_API">Use PostgreSQL REST API</string>
+    <string name="radio_Gemini">Use Gemini</string>
+    <string name="radio_LLM">Use LLM</string>
+    <string name="hint_key">API Key…</string>
+    <string name="check_key">Remember API Key</string>
+    <string name="hint_model">LLM Model name…</string>
+    <string name="text_nodb">No database selected.</string>
 </resources>

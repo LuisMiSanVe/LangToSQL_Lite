@@ -1,8 +1,8 @@
-> [See in spanish/Ver en español](https://github.com/LuisMiSanVe/LangToSQLLite/blob/main/README.es.md)
+> [See in spanish/Ver en español](https://github.com/LuisMiSanVe/LangToSQL_Lite/blob/main/README.es.md)
 
 <img src="https://github.com/LuisMiSanVe/LuisMiSanVe/blob/main/Resources/LangToSQL/LangToSQLLite_banner.png" style="width: 100%; height: auto;" alt="LangToSQL Lite Banner">
 
-# <img src="" width="40" alt="LangToSQL Lite Logo"> LangToSQL Lite | AI-Assisted App for SQLite
+# <img src="https://github.com/LuisMiSanVe/LangToSQL_Lite/tree/main/LangToSQL/app/src/main/res/drawable/logo.png" width="40" alt="LangToSQL Lite Logo"> LangToSQL Lite | AI-Assisted App for SQLite
 [![image](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
 [![image](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/studio)
 [![image](https://img.shields.io/badge/json-5E5C5C?style=for-the-badge&logo=json&logoColor=white)](https://www.newtonsoft.com/json)
