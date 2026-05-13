@@ -10,7 +10,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/title_db"/>
+        android:text="@string/title_db"
+        android:textSize="20sp"/>
 
     <RadioGroup
         android:layout_width="match_parent"
@@ -22,7 +23,8 @@
             android:id="@+id/useSQLite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/radio_SQLite"/>
+            android:text="@string/radio_SQLite"
+            android:checked="true"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -75,7 +77,8 @@
                 android:layout_marginEnd="8dp"
                 android:background="@android:drawable/editbox_background"
                 android:padding="10dp"
-                android:hint="@string/hint_ip" />
+                android:hint="@string/hint_ip"
+                android:enabled="false"/>
 
             <EditText
                 android:id="@+id/apiPortText"
@@ -86,7 +89,8 @@
                 android:layout_marginEnd="8dp"
                 android:background="@android:drawable/editbox_background"
                 android:padding="10dp"
-                android:hint="@string/hint_port"/>
+                android:hint="@string/hint_port"
+                android:enabled="false"/>
         </LinearLayout>
 
     </RadioGroup>
@@ -94,7 +98,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/title_ai"/>
+        android:layout_marginTop="10dp"
+        android:text="@string/title_ai"
+        android:textSize="20sp"/>
 
     <RadioGroup
         android:layout_width="match_parent"
@@ -106,7 +112,8 @@
             android:id="@+id/useGemini"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/radio_Gemini"/>
+            android:text="@string/radio_Gemini"
+            android:checked="true"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -162,7 +169,8 @@
                     android:layout_marginEnd="8dp"
                     android:background="@android:drawable/editbox_background"
                     android:padding="10dp"
-                    android:hint="@string/hint_ip" />
+                    android:hint="@string/hint_ip"
+                    android:enabled="false"/>
 
                 <EditText
                     android:id="@+id/llmPortText"
@@ -173,7 +181,8 @@
                     android:layout_marginEnd="8dp"
                     android:background="@android:drawable/editbox_background"
                     android:padding="10dp"
-                    android:hint="@string/hint_port" />
+                    android:hint="@string/hint_port"
+                    android:enabled="false"/>
 
             </LinearLayout>
 
@@ -186,10 +195,24 @@
                 android:layout_marginEnd="8dp"
                 android:background="@android:drawable/editbox_background"
                 android:padding="10dp"
-                android:hint="@string/hint_model" />
+                android:hint="@string/hint_model"
+                android:enabled="false"/>
 
         </LinearLayout>
 
     </RadioGroup>
+
+    <ImageButton
+        android:id="@+id/sendButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:focusable="true"
+        android:src="@drawable/save"
+        android:background="@drawable/outline_box"
+        android:layout_marginTop="10dp"
+        android:padding="6dp"
+        android:scaleType="centerInside"
+        android:clickable="true"
+        android:layout_gravity="right"/>
 
 </LinearLayout>

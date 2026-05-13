@@ -10,9 +10,9 @@
     <string name="hint_ip">IP Address…</string>
     <string name="hint_port">Port…</string>
     <string name="radio_SQLite">Use local SQLite database file</string>
-    <string name="radio_API">Use PostgreSQL REST API</string>
-    <string name="radio_Gemini">Use Gemini</string>
-    <string name="radio_LLM">Use LLM</string>
+    <string name="radio_API">Use LangToSQL REST API</string>
+    <string name="radio_Gemini">Use Gemini API</string>
+    <string name="radio_LLM">Use LLM local server</string>
     <string name="hint_key">API Key…</string>
     <string name="check_key">Remember API Key</string>
     <string name="hint_model">LLM Model name…</string>
