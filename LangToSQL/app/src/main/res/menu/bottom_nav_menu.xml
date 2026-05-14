@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/navigation_run"
-        android:icon="@drawable/run"
+        android:icon="@drawable/send"
         android:title="@string/title_run" />
 
     <item

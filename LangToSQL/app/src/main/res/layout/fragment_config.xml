@@ -202,17 +202,38 @@
 
     </RadioGroup>
 
-    <ImageButton
-        android:id="@+id/sendButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:focusable="true"
-        android:src="@drawable/save"
-        android:background="@drawable/outline_box"
-        android:layout_marginTop="10dp"
-        android:padding="6dp"
-        android:scaleType="centerInside"
-        android:clickable="true"
-        android:layout_gravity="right"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <CheckBox
+            android:id="@+id/showQueryCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:padding="6dp"
+            android:scaleType="centerInside"
+            android:text="@string/check_show"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/saveButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:focusable="true"
+            android:src="@drawable/save"
+            android:background="@drawable/outline_box"
+            android:layout_marginTop="10dp"
+            android:padding="6dp"
+            android:scaleType="centerInside"
+            android:clickable="true"
+            android:layout_gravity="end"/>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -3,7 +3,8 @@
     <string name="title_run">Run</string>
     <string name="title_maps">Maps</string>
     <string name="title_config">Config</string>
-    <string name="hint_run">Request…</string>
+    <string name="hint_send">Request…</string>
+    <string name="hint_run">Query…</string>
     <string name="hint_file">SQLite database file…</string>
     <string name="title_db">Database settings</string>
     <string name="title_ai">AI settings</string>
@@ -17,4 +18,5 @@
     <string name="check_key">Remember API Key</string>
     <string name="hint_model">LLM Model name…</string>
     <string name="text_nodb">No database selected.</string>
+    <string name="check_show">Show advanced run query fields</string>
 </resources>

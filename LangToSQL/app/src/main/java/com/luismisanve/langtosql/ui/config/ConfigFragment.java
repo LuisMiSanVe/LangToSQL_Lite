@@ -1,6 +1,8 @@
 package com.luismisanve.langtosql.ui.config;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
+import static android.view.View.*;
 import android.content.*;
 import android.database.Cursor;
 import android.net.*;
@@ -15,7 +17,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentConfigBinding;
-import java.io.InputStream;
+import com.luismisanve.langtosql.ui.run.RunFragment;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class ConfigFragment extends Fragment {
     // Variables
@@ -33,6 +37,8 @@ public class ConfigFragment extends Fragment {
     public EditText llmIpText;
     public EditText llmPortText;
     public EditText llmModelText;
+    private ImageButton saveButton;
+    public CheckBox showQueryCheck;
     private final ActivityResultLauncher<Intent> filePickerLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
@@ -71,6 +77,30 @@ public class ConfigFragment extends Fragment {
         llmIpText = root.findViewById(R.id.llmIpText);
         llmPortText = root.findViewById(R.id.llmPortText);
         llmModelText = root.findViewById(R.id.llmModelText);
+
+        showQueryCheck = root.findViewById(R.id.showQueryCheck);
+        saveButton = root.findViewById(R.id.saveButton);
+
+        File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
+        File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
+        if (db.exists()) {
+            String[] dbConfig = readFromFile("dbsettings.cfg").split(";");
+            useSQLite.setChecked(Boolean.parseBoolean(dbConfig[0]));
+            fileText.setText(dbConfig[1]);
+            useApi.setChecked(!Boolean.parseBoolean(dbConfig[0]));
+            apiIpText.setText(dbConfig[2]);
+            apiPortText.setText(dbConfig[3]);
+        }
+        if (ai.exists()) {
+            String[] aiConfig = readFromFile("aisettings.cfg").split(";");
+            useGemini.setChecked(Boolean.parseBoolean(aiConfig[0]));
+            rememberCheck.setChecked(Boolean.parseBoolean(aiConfig[1]));
+            geminiKeyText.setText(aiConfig[2]);
+            useLLM.setChecked(!Boolean.parseBoolean(aiConfig[0]));
+            llmIpText.setText(aiConfig[3]);
+            llmPortText.setText(aiConfig[4]);
+            llmModelText.setText(aiConfig[5]);
+        }
 
         // Events
         useSQLite.setOnClickListener(v -> {
@@ -111,6 +141,32 @@ public class ConfigFragment extends Fragment {
             });
 
             filePickerLauncher.launch(intent);
+        });
+        saveButton.setOnClickListener(v -> {
+            StringBuilder dbSettingsFormat = new StringBuilder();
+            StringBuilder aiSettingsFormat = new StringBuilder();
+
+            dbSettingsFormat.append(useSQLite.isChecked()).append(";");
+            dbSettingsFormat.append(fileText.getText()).append(";");
+            dbSettingsFormat.append(apiIpText.getText()).append(";");
+            dbSettingsFormat.append(apiPortText.getText());
+
+            aiSettingsFormat.append(useGemini.isChecked()).append(";");
+            aiSettingsFormat.append(rememberCheck.isChecked()).append(";");
+            if (rememberCheck.isChecked())
+                aiSettingsFormat.append(geminiKeyText.getText());
+            aiSettingsFormat.append(";").append(llmIpText.getText()).append(";");
+            aiSettingsFormat.append(llmPortText.getText()).append(";");
+            aiSettingsFormat.append(llmModelText.getText());
+
+            writeToFile("dbsettings.cfg", dbSettingsFormat.toString());
+            writeToFile("aisettings.cfg", aiSettingsFormat.toString());
+        });
+        showQueryCheck.setOnClickListener(view -> {
+            if (showQueryCheck.isChecked())
+                RunFragment.showQuery = VISIBLE;
+            else
+                RunFragment.showQuery = GONE;
         });
 
         return root;
@@ -175,6 +231,43 @@ public class ConfigFragment extends Fragment {
                 Toast.makeText(getContext(), "The selected file is not a valid SQLite database.", Toast.LENGTH_SHORT).show();
         } else
             Toast.makeText(getContext(), "No database file has been selected.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void writeToFile(String fileName, String data) {
+        FileOutputStream fos = null;
+        try {
+            fos = getContext().openFileOutput(fileName, MODE_PRIVATE);
+            fos.write(data.getBytes(StandardCharsets.UTF_8));
+            fos.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
+
+    private String readFromFile(String fileName) {
+        StringBuilder sb = new StringBuilder();
+
+        try (FileInputStream fis = getContext().openFileInput(fileName);
+             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+             BufferedReader br = new BufferedReader(isr)) {
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
     }
 
     // Destroyer
