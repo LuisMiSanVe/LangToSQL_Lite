@@ -117,6 +117,14 @@ public class ConfigFragment extends Fragment {
             fileButton.setImageResource(R.drawable.file);
             apiIpText.setEnabled(false);
             apiPortText.setEnabled(false);
+
+            useGemini.setEnabled(true);
+            geminiKeyText.setEnabled(true);
+            rememberCheck.setEnabled(true);
+            useLLM.setEnabled(true);
+            llmIpText.setEnabled(true);
+            llmPortText.setEnabled(true);
+            llmModelText.setEnabled(true);
         });
         useApi.setOnClickListener(v -> {
             fileText.setEnabled(false);
@@ -124,6 +132,16 @@ public class ConfigFragment extends Fragment {
             fileButton.setImageResource(R.drawable.file_disabled);
             apiIpText.setEnabled(true);
             apiPortText.setEnabled(true);
+
+            useGemini.setEnabled(false);
+            geminiKeyText.setEnabled(false);
+            rememberCheck.setEnabled(false);
+            useLLM.setEnabled(false);
+            llmIpText.setEnabled(false);
+            llmPortText.setEnabled(false);
+            llmModelText.setEnabled(false);
+
+            Toast.makeText(getContext(), "REST API's AI settings will override.", Toast.LENGTH_LONG).show();
         });
         useGemini.setOnClickListener(v -> {
             geminiKeyText.setEnabled(true);

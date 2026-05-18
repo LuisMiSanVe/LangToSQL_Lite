@@ -4,7 +4,6 @@ import android.database.*;
 import android.database.sqlite.*;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
@@ -14,11 +13,15 @@ import androidx.lifecycle.ViewModelProvider;
 import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentRunBinding;
 import static android.view.View.*;
+import org.json.*;
+
 import java.io.*;
+import retrofit2.*;
 
 public class RunFragment extends Fragment {
     // Variables
     private FragmentRunBinding binding;
+    private EditText requestText;
     private ImageButton sendButton;
     private LinearLayout queryLayout;
     private ImageButton runButton;
@@ -44,6 +47,7 @@ public class RunFragment extends Fragment {
         View root = binding.getRoot();
 
         // Layout Objects
+        requestText = root.findViewById(R.id.requestText);
         sendButton = root.findViewById(R.id.sendButton);
         queryLayout = root.findViewById(R.id.queryLayout);
         queryText = root.findViewById(R.id.queryText);
@@ -111,92 +115,157 @@ public class RunFragment extends Fragment {
 
         // Events
         sendButton.setOnClickListener(v -> {
-            // Send
+            if (!file.isEmpty()) { // Generate the query using the AI selected
+
+                runButton.performClick();
+            } else { // Generate the result in a PostgreSQL server using the LangToSQL REST API, overring its settings
+                RestApiCall api = new RestApiClient("http://" + apiIp + ":" + apiPort.trim() + "/").getClient().create(RestApiCall.class);
+
+                Call<String> call = api.generateSQL(requestText.getText().toString());
+
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if (response.isSuccessful()) {
+                            try {
+                                String jsonString = response.body();
+
+                                JSONArray jsonArray = new JSONArray(jsonString);
+
+                                MatrixCursor cursor = jsonToCursor(jsonArray);
+
+                                buildTable(cursor);
+                            } catch (Exception e) {
+                                Toast.makeText(getContext(), "The REST API's response couldn't be interpreted.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Toast.makeText(getContext(), "The REST API is not reachable.", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
         });
         runButton.setOnClickListener(v -> {
-            if (!file.isEmpty()) {
+            Cursor cursor = null;
+
+            if (!file.isEmpty()) { // SQLite
                 SQLiteDatabase sqliteDb = SQLiteDatabase.openDatabase(
                         file,
                         null,
                         SQLiteDatabase.OPEN_READONLY
                 );
                 try {
-                    Cursor cursor = sqliteDb.rawQuery(queryText.getText().toString(), null);
-
-                    tableLayout.removeAllViews();
-
-                    if (cursor == null) return;
-
-                    String[] columns = cursor.getColumnNames();
-
-                    TableRow headerRow = new TableRow(getContext());
-
-                    for (String col : columns) {
-                        TextView tv = new TextView(getContext());
-                        tv.setText(col);
-                        tv.setPadding(8, 8, 8, 8);
-                        tv.setBackgroundColor(0xFFE7E7E7);
-                        tv.setGravity(Gravity.CENTER);
-                        tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.outline_box));
-
-                        headerRow.addView(tv);
-                    }
-
-                    tableLayout.addView(headerRow);
-
-                    while (cursor.moveToNext()) {
-
-                        TableRow row = new TableRow(getContext());
-
-                        for (int i = 0; i < columns.length; i++) {
-
-                            TextView tv = new TextView(getContext());
-
-                            int type = cursor.getType(i);
-
-                            String value;
-
-                            switch (type) {
-                                case Cursor.FIELD_TYPE_NULL:
-                                    value = "NULL";
-                                    break;
-                                case Cursor.FIELD_TYPE_BLOB:
-                                    value = "[BLOB]";
-                                    break;
-                                case Cursor.FIELD_TYPE_INTEGER:
-                                case Cursor.FIELD_TYPE_FLOAT:
-                                    value = String.valueOf(cursor.getString(i));
-                                    break;
-                                case Cursor.FIELD_TYPE_STRING:
-                                default:
-                                    value = cursor.getString(i);
-                                    break;
-                            }
-                            tv.setText(value);
-                            tv.setPadding(8, 8, 8, 8);
-                            tv.setBackgroundColor(0xFFEFEFEF);
-                            tv.setGravity(Gravity.CENTER);
-
-                            row.addView(tv);
-                        }
-
-                        tableLayout.addView(row);
-                    }
-
-                    cursor.close();
+                    cursor = sqliteDb.rawQuery(queryText.getText().toString(), null);
                 } catch (SQLiteException e) {
                     Toast.makeText(getContext(), "The query failed: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
                 sqliteDb.close();
-            } else {
-
             }
+
+            if (cursor != null)
+                buildTable(cursor);
         });
 
         return root;
     }
 
     // Other methods
+    private void buildTable(Cursor cursor) {
+        tableLayout.removeAllViews();
+
+        if (cursor == null) return;
+
+        String[] columns = cursor.getColumnNames();
+
+        TableRow headerRow = new TableRow(getContext());
+
+        for (String col : columns) {
+            TextView tv = new TextView(getContext());
+            tv.setText(col);
+            tv.setPadding(8, 8, 8, 8);
+            tv.setBackgroundColor(0xFFE7E7E7);
+            tv.setGravity(Gravity.CENTER);
+            tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.outline_box));
+
+            headerRow.addView(tv);
+        }
+
+        tableLayout.addView(headerRow);
+
+        while (cursor.moveToNext()) {
+
+            TableRow row = new TableRow(getContext());
+
+            for (int i = 0; i < columns.length; i++) {
+
+                TextView tv = new TextView(getContext());
+
+                int type = cursor.getType(i);
+
+                String value;
+
+                switch (type) {
+                    case Cursor.FIELD_TYPE_NULL:
+                        value = "NULL";
+                        break;
+                    case Cursor.FIELD_TYPE_BLOB:
+                        value = "[BLOB]";
+                        break;
+                    case Cursor.FIELD_TYPE_INTEGER:
+                    case Cursor.FIELD_TYPE_FLOAT:
+                        value = String.valueOf(cursor.getString(i));
+                        break;
+                    case Cursor.FIELD_TYPE_STRING:
+                    default:
+                        value = cursor.getString(i);
+                        break;
+                }
+                tv.setText(value);
+                tv.setPadding(8, 8, 8, 8);
+                tv.setBackgroundColor(0xFFEFEFEF);
+                tv.setGravity(Gravity.CENTER);
+
+                row.addView(tv);
+            }
+
+            tableLayout.addView(row);
+        }
+
+        cursor.close();
+    }
+
+    public MatrixCursor jsonToCursor(JSONArray array) throws Exception {
+
+        if (array.length() == 0) return null;
+
+        JSONObject first = array.getJSONObject(0);
+        JSONArray keys = first.names();
+
+        String[] columns = new String[keys.length()];
+        for (int i = 0; i < keys.length(); i++) {
+            columns[i] = keys.getString(i);
+        }
+
+        MatrixCursor cursor = new MatrixCursor(columns);
+
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = array.getJSONObject(i);
+
+            Object[] row = new Object[columns.length];
+
+            for (int j = 0; j < columns.length; j++) {
+                String key = columns[j];
+                row[j] = obj.opt(key); // safe get
+            }
+
+            cursor.addRow(row);
+        }
+
+        return cursor;
+    }
 
     // Destroyer
     @Override
