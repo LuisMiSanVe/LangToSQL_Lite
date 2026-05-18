@@ -3,6 +3,9 @@ package com.luismisanve.langtosql.ui.config;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.*;
+
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.*;
 import android.database.Cursor;
 import android.net.*;
@@ -39,6 +42,7 @@ public class ConfigFragment extends Fragment {
     public EditText llmModelText;
     private ImageButton saveButton;
     public CheckBox showQueryCheck;
+    private FileManager fileManager;
     private final ActivityResultLauncher<Intent> filePickerLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
@@ -81,26 +85,30 @@ public class ConfigFragment extends Fragment {
         showQueryCheck = root.findViewById(R.id.showQueryCheck);
         saveButton = root.findViewById(R.id.saveButton);
 
-        File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
-        File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
-        if (db.exists()) {
-            String[] dbConfig = readFromFile("dbsettings.cfg").split(";");
-            useSQLite.setChecked(Boolean.parseBoolean(dbConfig[0]));
-            fileText.setText(dbConfig[1]);
-            useApi.setChecked(!Boolean.parseBoolean(dbConfig[0]));
-            apiIpText.setText(dbConfig[2]);
-            apiPortText.setText(dbConfig[3]);
-        }
-        if (ai.exists()) {
-            String[] aiConfig = readFromFile("aisettings.cfg").split(";");
-            useGemini.setChecked(Boolean.parseBoolean(aiConfig[0]));
-            rememberCheck.setChecked(Boolean.parseBoolean(aiConfig[1]));
-            geminiKeyText.setText(aiConfig[2]);
-            useLLM.setChecked(!Boolean.parseBoolean(aiConfig[0]));
-            llmIpText.setText(aiConfig[3]);
-            llmPortText.setText(aiConfig[4]);
-            llmModelText.setText(aiConfig[5]);
-        }
+        // Apply saved config after root is loaded
+        root.post(() -> {
+            fileManager = new FileManager(getContext());
+            File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
+            File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
+            if (db.exists()) {
+                String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
+                useSQLite.setChecked(Boolean.parseBoolean(dbConfig[0]));
+                fileText.setText(dbConfig[1]);
+                useApi.setChecked(!Boolean.parseBoolean(dbConfig[0]));
+                apiIpText.setText(dbConfig[2]);
+                apiPortText.setText(dbConfig[3]);
+            }
+            if (ai.exists()) {
+                String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
+                useGemini.setChecked(Boolean.parseBoolean(aiConfig[0]));
+                rememberCheck.setChecked(Boolean.parseBoolean(aiConfig[1]));
+                geminiKeyText.setText(aiConfig[2]);
+                useLLM.setChecked(!Boolean.parseBoolean(aiConfig[0]));
+                llmIpText.setText(aiConfig[3]);
+                llmPortText.setText(aiConfig[4]);
+                llmModelText.setText(aiConfig[5]);
+            }
+        });
 
         // Events
         useSQLite.setOnClickListener(v -> {
@@ -135,6 +143,8 @@ public class ConfigFragment extends Fragment {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {
                     "application/octet-stream",
                     "application/x-sqlite3"
@@ -143,24 +153,13 @@ public class ConfigFragment extends Fragment {
             filePickerLauncher.launch(intent);
         });
         saveButton.setOnClickListener(v -> {
-            StringBuilder dbSettingsFormat = new StringBuilder();
-            StringBuilder aiSettingsFormat = new StringBuilder();
+            StringBuilder dbSettingsFormat = buildDbSettings();
+            StringBuilder aiSettingsFormat = buildAiSettings();
 
-            dbSettingsFormat.append(useSQLite.isChecked()).append(";");
-            dbSettingsFormat.append(fileText.getText()).append(";");
-            dbSettingsFormat.append(apiIpText.getText()).append(";");
-            dbSettingsFormat.append(apiPortText.getText());
+            fileManager.writeToFile("dbsettings.cfg", dbSettingsFormat.toString());
+            fileManager.writeToFile("aisettings.cfg", aiSettingsFormat.toString());
 
-            aiSettingsFormat.append(useGemini.isChecked()).append(";");
-            aiSettingsFormat.append(rememberCheck.isChecked()).append(";");
-            if (rememberCheck.isChecked())
-                aiSettingsFormat.append(geminiKeyText.getText());
-            aiSettingsFormat.append(";").append(llmIpText.getText()).append(";");
-            aiSettingsFormat.append(llmPortText.getText()).append(";");
-            aiSettingsFormat.append(llmModelText.getText());
-
-            writeToFile("dbsettings.cfg", dbSettingsFormat.toString());
-            writeToFile("aisettings.cfg", aiSettingsFormat.toString());
+            Toast.makeText(getContext(), "Settings saved.", Toast.LENGTH_SHORT).show();
         });
         showQueryCheck.setOnClickListener(view -> {
             if (showQueryCheck.isChecked())
@@ -173,10 +172,35 @@ public class ConfigFragment extends Fragment {
     }
 
     // Other methods
+    private StringBuilder buildDbSettings(){
+        return new StringBuilder().append(useSQLite.isChecked()).append(";")
+                                  .append(fileText.getText()).append(";")
+                                  .append(apiIpText.getText()).append(";")
+                                  .append(apiPortText.getText());
+    }
+
+    private StringBuilder buildAiSettings(){
+        StringBuilder aiSettingsFormat = new StringBuilder();
+
+        aiSettingsFormat.append(useGemini.isChecked()).append(";");
+        aiSettingsFormat.append(rememberCheck.isChecked()).append(";");
+        if (rememberCheck.isChecked())
+            aiSettingsFormat.append(geminiKeyText.getText());
+        aiSettingsFormat.append(";").append(llmIpText.getText()).append(";");
+        aiSettingsFormat.append(llmPortText.getText()).append(";");
+        aiSettingsFormat.append(llmModelText.getText());
+
+        return aiSettingsFormat;
+    }
+
+    @SuppressLint("WrongConstant")
     private void loadFile(ActivityResult result){
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
 
             Uri uri = result.getData().getData();
+            // Save permissions
+            final int takeFlags = result.getData().getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            getContext().getContentResolver().takePersistableUriPermission(uri, takeFlags);
 
             String name = null;
 
@@ -233,41 +257,31 @@ public class ConfigFragment extends Fragment {
             Toast.makeText(getContext(), "No database file has been selected.", Toast.LENGTH_SHORT).show();
     }
 
-    private void writeToFile(String fileName, String data) {
-        FileOutputStream fos = null;
-        try {
-            fos = getContext().openFileOutput(fileName, MODE_PRIVATE);
-            fos.write(data.getBytes(StandardCharsets.UTF_8));
-            fos.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception ignored) {
-                }
-            }
+    @Override
+    public void onPause(){
+        super.onPause();
+        // Compare current settings with last saved to check for changes
+        if (!buildDbSettings().toString().equals(fileManager.readFromFile("dbsettings.cfg")) ||
+            !buildAiSettings().toString().equals(fileManager.readFromFile("aisettings.cfg"))) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Unsaved changes")
+                    .setMessage("You have unsaved changes, do you want to save them?")
+                    .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            saveButton.performClick();
+                        }
+                    })
+                    .setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
-    }
-
-    private String readFromFile(String fileName) {
-        StringBuilder sb = new StringBuilder();
-
-        try (FileInputStream fis = getContext().openFileInput(fileName);
-             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-             BufferedReader br = new BufferedReader(isr)) {
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return sb.toString();
     }
 
     // Destroyer

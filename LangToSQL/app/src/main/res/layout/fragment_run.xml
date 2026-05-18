@@ -1,132 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp"
-    tools:context=".ui.run.RunFragment">
+    tools:context=".ui.run.RunFragment"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="4dp">
-
-        <EditText
-            android:id="@+id/requestText"
-            android:inputType="text"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:background="@android:drawable/editbox_background"
-            android:padding="10dp"
-            android:hint="@string/hint_send" />
-
-        <ImageButton
-            android:id="@+id/sendButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:focusable="true"
-            android:src="@drawable/send"
-            android:background="@color/white"
-            android:padding="6dp"
-            android:scaleType="centerInside"
-            android:clickable="true" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/queryLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:visibility="gone">
-
-        <EditText
-            android:id="@+id/queryText"
-            android:inputType="text"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:background="@android:drawable/editbox_background"
-            android:padding="10dp"
-            android:hint="@string/hint_run" />
-
-        <ImageButton
-            android:id="@+id/runButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:focusable="true"
-            android:src="@drawable/run"
-            android:background="@color/white"
-            android:padding="6dp"
-            android:scaleType="centerInside"
-            android:clickable="true" />
-
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/gray">
-
-        <TableLayout
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <EditText
+                android:id="@+id/requestText"
+                android:inputType="text"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:background="@android:drawable/editbox_background"
+                android:padding="10dp"
+                android:hint="@string/hint_send" />
+
+            <ImageButton
+                android:id="@+id/sendButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:focusable="true"
+                android:src="@drawable/send"
+                android:background="@color/white"
+                android:padding="6dp"
+                android:scaleType="centerInside"
+                android:clickable="true" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/queryLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:padding="4dp"
-            android:stretchColumns="*">
+            android:visibility="gone">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+            <EditText
+                android:id="@+id/queryText"
+                android:inputType="text"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:padding="2dp">
+                android:layout_marginEnd="8dp"
+                android:background="@android:drawable/editbox_background"
+                android:padding="10dp"
+                android:hint="@string/hint_run" />
 
-                <TextView
+            <ImageButton
+                android:id="@+id/runButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:focusable="true"
+                android:src="@drawable/run"
+                android:background="@color/white"
+                android:padding="6dp"
+                android:scaleType="centerInside"
+                android:clickable="true" />
+
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <TableLayout
+                    android:id="@+id/tableLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="sample_column1" />
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:stretchColumns="*">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="sample_column2" />
-            </TableRow>
+                </TableLayout>
+            </ScrollView>
+        </HorizontalScrollView>
+    </LinearLayout>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:padding="2dp">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/fade"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        android:layout_gravity="bottom"
+        android:translationZ="-1dp"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="sample_value1" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="sample_value2" />
-            </TableRow>
-
-        </TableLayout>
-    </ScrollView>
-</LinearLayout>
+</FrameLayout>
