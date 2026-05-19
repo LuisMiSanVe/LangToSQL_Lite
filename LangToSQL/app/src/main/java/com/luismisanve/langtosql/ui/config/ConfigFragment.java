@@ -22,26 +22,25 @@ import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentConfigBinding;
 import com.luismisanve.langtosql.ui.run.RunFragment;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 public class ConfigFragment extends Fragment {
     // Variables
     private FragmentConfigBinding binding;
-    public RadioButton useSQLite;
-    public EditText fileText;
+    private RadioButton useSQLite;
+    private EditText fileText;
     private ImageButton fileButton;
-    public RadioButton useApi;
-    public EditText apiIpText;
-    public EditText apiPortText;
-    public RadioButton useGemini;
-    public EditText geminiKeyText;
-    public CheckBox rememberCheck;
-    public RadioButton useLLM;
-    public EditText llmIpText;
-    public EditText llmPortText;
-    public EditText llmModelText;
+    private RadioButton useApi;
+    private EditText apiIpText;
+    private EditText apiPortText;
+    private RadioButton useGemini;
+    private EditText geminiKeyText;
+    private CheckBox rememberCheck;
+    private RadioButton useLLM;
+    private EditText llmIpText;
+    private EditText llmPortText;
+    private EditText llmModelText;
     private ImageButton saveButton;
-    public CheckBox showQueryCheck;
+    private CheckBox showQueryCheck;
     private FileManager fileManager;
     private final ActivityResultLauncher<Intent> filePickerLauncher =
             registerForActivityResult(
@@ -51,11 +50,7 @@ public class ConfigFragment extends Fragment {
                     });
 
     // Initializer
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        ConfigViewModel configViewModel =
-                new ViewModelProvider(this).get(ConfigViewModel.class);
-
+    public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentConfigBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -92,18 +87,28 @@ public class ConfigFragment extends Fragment {
             File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
             if (db.exists()) {
                 String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
-                useSQLite.setChecked(Boolean.parseBoolean(dbConfig[0]));
+                if (Boolean.parseBoolean(dbConfig[0])) {
+                    useSQLite.performClick();
+                    useSQLite.setChecked(Boolean.parseBoolean(dbConfig[0]));
+                } else {
+                    useApi.performClick();
+                    useApi.setChecked(!Boolean.parseBoolean(dbConfig[0]));
+                }
                 fileText.setText(dbConfig[1]);
-                useApi.setChecked(!Boolean.parseBoolean(dbConfig[0]));
                 apiIpText.setText(dbConfig[2]);
                 apiPortText.setText(dbConfig[3]);
             }
             if (ai.exists()) {
                 String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
-                useGemini.setChecked(Boolean.parseBoolean(aiConfig[0]));
+                if (Boolean.parseBoolean(aiConfig[0])) {
+                    useGemini.performClick();
+                    useGemini.setChecked(Boolean.parseBoolean(aiConfig[0]));
+                } else {
+                    useLLM.performClick();
+                    useLLM.setChecked(!Boolean.parseBoolean(aiConfig[0]));
+                }
                 rememberCheck.setChecked(Boolean.parseBoolean(aiConfig[1]));
                 geminiKeyText.setText(aiConfig[2]);
-                useLLM.setChecked(!Boolean.parseBoolean(aiConfig[0]));
                 llmIpText.setText(aiConfig[3]);
                 llmPortText.setText(aiConfig[4]);
                 llmModelText.setText(aiConfig[5]);
@@ -177,7 +182,8 @@ public class ConfigFragment extends Fragment {
             fileManager.writeToFile("dbsettings.cfg", dbSettingsFormat.toString());
             fileManager.writeToFile("aisettings.cfg", aiSettingsFormat.toString());
 
-            Toast.makeText(getContext(), "Settings saved.", Toast.LENGTH_SHORT).show();
+            if (getContext()!=null)
+                Toast.makeText(getContext(), "Settings saved.", Toast.LENGTH_SHORT).show();
         });
         showQueryCheck.setOnClickListener(view -> {
             if (showQueryCheck.isChecked())

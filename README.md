@@ -36,8 +36,21 @@ Simply put that data you just got into the settings in the app.
 
 ## 📖 About the App
 **[Natural Language to SQL Translation Method:](https://gist.github.com/LuisMiSanVe/2da8e2d932a06ef408b3ee8468d0d820)**  
-This method maps the database structure into a JSON that Gemini analyzes ([with this prompt](https://gist.github.com/LuisMiSanVe/b189c8920d2dcedf5fd46485f3403d51)) to create an SQL query, which is then run on the SQLite Database, returning the requested data.  
+This method maps the database structure into a JSON that the AI analyzes ([with this prompt](https://gist.github.com/LuisMiSanVe/b189c8920d2dcedf5fd46485f3403d51)) to create an SQL query, which is then run on the SQLite Database, returning the requested data.  
 Since this method does not map the database values, token usage is lower, and the data is more reliable since it directly comes from the SQLite Database. However, it does not completely prevent AI-generated errors. Occasionally, the SQL query might fail due to non-existing columns, in which case you should check the generated query to detect the error.
+
+## 🎨 Customization Options
+The app has a `Config screen` that allows the user to setup the app.
+
+The settings are separated in two blocks:
+
+- **Database settings**\
+  These settings lets you to choose between using a SQLite database or to connect it to the [LangToSQL REST API](https://github.com/LuisMiSanVe/LangToSQL_API/tree/main) which changes drastically the functions of the app, working more like a visualizer for the REST API, as all the rest of settings are overriden by the REST API's config. This mode allows you to lead the heavy database work to a external server and see the results returned by the server's PostgreSQL database instead.
+
+- **AI Settings**\
+  You can choose to use the Gemini API or a local LLM Server.
+
+You can also enable the direct run query fields to write your own SELECT queries and execute them in the SQLite Database. 
 
 ## 🚀 Releases
 The version will be released using these versioning policies:\

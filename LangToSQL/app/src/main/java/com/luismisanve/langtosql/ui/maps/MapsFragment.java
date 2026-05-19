@@ -10,26 +10,32 @@ import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentMapsBinding;
 
 public class MapsFragment extends Fragment {
-
+    // Variables
     private FragmentMapsBinding binding;
+    private ImageButton mapButton;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    // Initializer
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         MapsViewModel mapsViewModel =
                 new ViewModelProvider(this).get(MapsViewModel.class);
 
         binding = FragmentMapsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        ImageButton button = root.findViewById(R.id.mapButton);
+        // Layout Objects
+        mapButton = root.findViewById(R.id.mapButton);
 
-        button.setOnClickListener(v -> {
+        // Events
+        mapButton.setOnClickListener(v -> {
             // Map
         });
 
         return root;
     }
 
+    // Other methods
+
+    // Destroyer
     @Override
     public void onDestroyView() {
         super.onDestroyView();

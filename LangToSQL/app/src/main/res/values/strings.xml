@@ -16,7 +16,7 @@
     <string name="radio_LLM">Use LLM local server</string>
     <string name="hint_key">API Key…</string>
     <string name="check_key">Remember API Key</string>
-    <string name="hint_model">LLM Model name…</string>
+    <string name="hint_model">Model…</string>
     <string name="text_nodb">No database selected.</string>
     <string name="check_show">Show advanced run query fields</string>
 </resources>

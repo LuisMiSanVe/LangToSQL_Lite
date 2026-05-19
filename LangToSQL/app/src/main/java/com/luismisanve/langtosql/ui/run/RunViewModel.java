@@ -1,19 +1,17 @@
 package com.luismisanve.langtosql.ui.run;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import org.json.JSONArray;
 
 public class RunViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private JSONArray cachedJson;
 
-    public RunViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is run fragment");
+    public void setJson(JSONArray cachedJson) {
+        this.cachedJson = cachedJson;
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public JSONArray getJson() {
+        return cachedJson;
     }
 }

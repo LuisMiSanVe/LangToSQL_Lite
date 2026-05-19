@@ -14,8 +14,10 @@ import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentRunBinding;
 import static android.view.View.*;
 import org.json.*;
-
 import java.io.*;
+import okhttp3.*;
+import okhttp3.Call;
+import okhttp3.Response;
 import retrofit2.*;
 
 public class RunFragment extends Fragment {
@@ -38,11 +40,8 @@ public class RunFragment extends Fragment {
     private String llmModel = "";
 
     // Initializer
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        RunViewModel runViewModel =
-                new ViewModelProvider(this).get(RunViewModel.class);
-
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        RunViewModel runViewModel = new ViewModelProvider(this).get(RunViewModel.class);
         binding = FragmentRunBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -63,32 +62,41 @@ public class RunFragment extends Fragment {
             String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
 
             if (Boolean.parseBoolean(dbConfig[0])) {
-                Uri uri = Uri.parse(dbConfig[1]);
-                File dbFile = null;
-                try {
-                    InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
-                    // Select current SQLite database and save it in cache
-                    dbFile = new File(getContext().getCacheDir(), "current.db");
+                Object path = null;
+                if (!dbConfig[1].isEmpty()) {
+                    Uri uri = Uri.parse(dbConfig[1]);
+                    File dbFile = null;
+                    try {
+                        InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
+                        // Select current SQLite database and save it in cache
+                        dbFile = new File(getContext().getCacheDir(), "current.db");
 
-                    FileOutputStream outputStream = new FileOutputStream(dbFile);
+                        FileOutputStream outputStream = new FileOutputStream(dbFile);
 
-                    byte[] buffer = new byte[8192];
-                    int length;
+                        byte[] buffer = new byte[8192];
+                        int length;
 
-                    while ((length = inputStream.read(buffer)) > 0) {
-                        outputStream.write(buffer, 0, length);
+                        while ((length = inputStream.read(buffer)) > 0) {
+                            outputStream.write(buffer, 0, length);
+                        }
+
+                        outputStream.flush();
+                        outputStream.close();
+                        inputStream.close();
+
+                        path = dbFile.getAbsolutePath();
+                    } catch (FileNotFoundException e) {
+                        Toast.makeText(getContext(), "The configured SQLite database doesn't exist.", Toast.LENGTH_SHORT).show();
+                        path = "";
+                    } catch (IOException e) {
+                        Toast.makeText(getContext(), "Failed to access the configured SQLite database.", Toast.LENGTH_SHORT).show();
+                        path = "";
                     }
-
-                    outputStream.flush();
-                    outputStream.close();
-                    inputStream.close();
-                } catch (FileNotFoundException e) {
-                    Toast.makeText(getContext(), "The configured SQLite database doesn't exist.", Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    Toast.makeText(getContext(), "Failed to access the configured SQLite database.", Toast.LENGTH_SHORT).show();
                 }
+                else
+                    path = "";
 
-                file = dbFile.getAbsolutePath();
+                file = path.toString();
                 apiIp = "";
                 apiPort = "";
             } else {
@@ -113,36 +121,182 @@ public class RunFragment extends Fragment {
             }
         }
 
+        JSONArray priorJson = runViewModel.getJson();
+        if (priorJson != null) {
+            try {
+                Cursor priorCursor = jsonToCursor(priorJson);
+                buildTable(priorCursor);
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "The prior result couldn't be loaded.", Toast.LENGTH_SHORT).show();
+            }
+        }
+
         // Events
         sendButton.setOnClickListener(v -> {
             if (!file.isEmpty()) { // Generate the query using the AI selected
+                // Map the database
 
-                runButton.performClick();
+                String context = "You're a database assistant, I'll send you requests and you'll return a PostgeSQL query to do my request and if what I request can't be found on the database, tell me, but don't use more words. " +
+                                "This is the database: " +
+                                //json +
+                                "\nAnd this is my request: ";
+
+                OkHttpClient client = new OkHttpClient();
+                String endpoint = "";
+                String requestUri = "";
+                Object aibody = null;
+
+                if (!geminiKey.isEmpty()) {
+                    endpoint = "https://generativelanguage.googleapis.com";
+                    requestUri = "/v1beta/models/gemini-2.5-flash:generateContent?key=" + geminiKey;
+
+                    try {
+                        JSONObject part = new JSONObject();
+                        part.put("text", context + requestText.getText());
+
+                        JSONObject content = new JSONObject();
+                        content.put("parts", new JSONArray().put(part));
+
+                        JSONObject body = new JSONObject();
+                        body.put("contents", new JSONArray().put(content));
+
+                        aibody = body;
+                    } catch (JSONException e){
+                        aibody = null;
+                        Toast.makeText(getContext(), "The AI request couldn't be built because of an error.", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    endpoint = "http://" + llmIp + ":" + llmPort;
+                    requestUri = "/v1/chat/completions";
+
+                    try {
+                        JSONObject message = new JSONObject();
+                        message.put("role", "user");
+                        message.put("content", context + requestText.getText());
+
+                        JSONArray messages = new JSONArray();
+                        messages.put(message);
+
+                        JSONObject body = new JSONObject();
+                        body.put("model", llmModel);
+                        body.put("messages", messages);
+                        body.put("temperature", 0.2);
+                        body.put("max_tokens", 512);
+
+                        aibody = body;
+                    } catch (JSONException e){
+                        aibody = null;
+                        Toast.makeText(getContext(), "The AI request couldn't be built because of an error.", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                // Build request
+                try {
+                    Request requestHttp = new Request.Builder()
+                            .url(endpoint + requestUri)
+                            .post(RequestBody.create(
+                                    aibody.toString(),
+                                    MediaType.parse("application/json")
+                            ))
+                            .addHeader("Content-Type", "application/json")
+                            .build();
+
+                    // Execute request
+                    //okhttp3.Response response = client.newCall(requestHttp).execute();
+
+
+                    client.newCall(requestHttp).enqueue(new okhttp3.Callback() {
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            if (response.isSuccessful()) {
+                                try {
+                                    String responseBody = response.body().string();
+
+                                    JSONObject json = new JSONObject(responseBody);
+
+                                    String generatedSql = "";
+
+                                    if (!geminiKey.isEmpty()) {
+                                        generatedSql =
+                                                json.getJSONArray("candidates")
+                                                        .getJSONObject(0)
+                                                        .getJSONObject("content")
+                                                        .getJSONArray("parts")
+                                                        .getJSONObject(0)
+                                                        .getString("text")
+                                                        .replace("```sql", "")
+                                                        .replace("```", "");
+
+                                    } else {
+                                        generatedSql =
+                                                json.getJSONArray("choices")
+                                                        .getJSONObject(0)
+                                                        .getJSONObject("message")
+                                                        .getString("content")
+                                                        .replace("```sql", "")
+                                                        .replace("```", "")
+                                                        .replace("\n", " ")
+                                                        .trim();
+                                    }
+
+                                    String finalSql = generatedSql;
+
+                                    getActivity().runOnUiThread(() -> {
+                                        queryText.setText(finalSql);
+                                        runButton.performClick();
+                                    });
+                                } catch (JSONException e) {
+                                    getActivity().runOnUiThread(() -> {
+                                        Toast.makeText(getContext(), "The AI's answer format doesn't align with compatible Gemini or LLM.", Toast.LENGTH_LONG).show();
+                                    });
+                                }
+                            } else {
+                                getActivity().runOnUiThread(() -> {
+                                    Toast.makeText(getContext(), "The AI server is not available.", Toast.LENGTH_LONG).show();
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                            getActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), "An error occurred when asking the AI.", Toast.LENGTH_LONG).show();
+                            });
+                        }
+                    });
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "An error occurred when asking the AI.", Toast.LENGTH_LONG).show();
+                }
             } else { // Generate the result in a PostgreSQL server using the LangToSQL REST API, overring its settings
                 RestApiCall api = new RestApiClient("http://" + apiIp + ":" + apiPort.trim() + "/").getClient().create(RestApiCall.class);
 
-                Call<String> call = api.generateSQL(requestText.getText().toString());
+                retrofit2.Call<ResponseBody> call = api.generateSQL(requestText.getText().toString());
 
-                call.enqueue(new Callback<String>() {
+                call.enqueue(new retrofit2.Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
+                    public void onResponse(retrofit2.Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
                             try {
-                                String jsonString = response.body();
+                                String raw = response.body().string();
+                                String[] parts = raw.split("Generated query:");
+                                String json = parts[0];
+                                queryText.setText(parts[1].trim());
+                                JSONArray arr = new JSONArray(json);
 
-                                JSONArray jsonArray = new JSONArray(jsonString);
+                                runViewModel.setJson(arr); // Save the result in memory
 
-                                MatrixCursor cursor = jsonToCursor(jsonArray);
+                                MatrixCursor cursor = jsonToCursor(arr);
 
                                 buildTable(cursor);
                             } catch (Exception e) {
                                 Toast.makeText(getContext(), "The REST API's response couldn't be interpreted.", Toast.LENGTH_LONG).show();
                             }
-                        }
+                        } else
+                            Toast.makeText(getContext(), "The REST API returned error code " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onFailure(retrofit2.Call<ResponseBody> call, Throwable t) {
                         Toast.makeText(getContext(), "The REST API is not reachable.", Toast.LENGTH_LONG).show();
                     }
                 });
@@ -161,9 +315,13 @@ public class RunFragment extends Fragment {
                     cursor = sqliteDb.rawQuery(queryText.getText().toString(), null);
                 } catch (SQLiteException e) {
                     Toast.makeText(getContext(), "The query failed: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    queryText.setEnabled(true);
+                    runButton.setEnabled(true);
                 }
                 sqliteDb.close();
             }
+            else
+                Toast.makeText(getContext(), "Direct queries can only be run in SQLite mode.", Toast.LENGTH_SHORT).show();
 
             if (cursor != null)
                 buildTable(cursor);

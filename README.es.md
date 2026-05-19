@@ -36,8 +36,21 @@ Simplemente pon los datos que acabas de conseguir en las pantallas de configurac
 
 ## 📖 Sobre la aplicación
 **[Método de traducción de Lenguaje Natural a SQL:](https://gist.github.com/LuisMiSanVe/2da8e2d932a06ef408b3ee8468d0d820)**  
-Este método mapea la estructura de la base de datos en un JSON que Gemini analiza ([con este prompt](https://gist.github.com/LuisMiSanVe/b189c8920d2dcedf5fd46485f3403d51)) para crear una consulta SQL, la cual es ejecutada en la base de datos SQLite directamente.  
+Este método mapea la estructura de la base de datos en un JSON que la IA analiza ([con este prompt](https://gist.github.com/LuisMiSanVe/b189c8920d2dcedf5fd46485f3403d51)) para crear una consulta SQL, la cual es ejecutada en la base de datos SQLite directamente.  
 Ya que este método no mapea los valores de la base de datos el uso de tokens es menor, y los datos que devuelve son mas fiables pues es el mismo Servidor el que los devuelve. Sin embargo, no evita completamente los errores que cometa la IA. A veces, la consulta SQL fallará debido a que la IA inventa columnas que no existen, en ese caso deberás comprobar la consulta generada para que identifiques el fallo.
+
+## 🎨 Opciones de Personalización
+La app tiene una `pantalla de Ajustes` que permite al usuario configurar la aplicación.
+
+Los ajustes están separados en dos bloques:
+
+- **Ajustes de base de datos**\
+  Estos ajustes te permiten elegir entre una base de datos SQLite o conectarse a la [API REST de LangToSQL](https://github.com/LuisMiSanVe/LangToSQL_API/tree/main) lo que cambia drásticamente la función de la app, funcionando más como un visualizador de la API REST, ya que el resto de ajustes serán sobreescritos con los de la API. Este modo te permite dejarle el trabajo pesado a un servidor externo y ver los resultados devueltos por la base de datos PostgreSQL del servidor en su lugar.
+
+- **Ajustes de IA**\
+  Puedes elegir si bien usar la API de Gemini o un servidor local de LLMs.
+
+Tambíen puedes activar los campos de sentencia directa, donde puedes escribir tus propios SELECT y ejecutarlos en la base de datos SQLite. 
 
 ## 🚀 Lanzamientos
 Una versión será lanzada solo cuando se cumplan los siguientes puntos:\
