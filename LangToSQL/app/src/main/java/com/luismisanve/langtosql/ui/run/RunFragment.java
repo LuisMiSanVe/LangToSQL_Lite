@@ -31,6 +31,7 @@ public class RunFragment extends Fragment {
     private TableLayout tableLayout;
     public static int showQuery = GONE;
     private FileManager fileManager;
+    private MapManager mapManager;
     private String file = "";
     private String apiIp = "";
     private String apiPort = "";
@@ -55,6 +56,7 @@ public class RunFragment extends Fragment {
 
         // Load config
         fileManager = new FileManager(getContext());
+        mapManager = new MapManager();
         queryLayout.setVisibility(showQuery);
         File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
         File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
@@ -135,6 +137,7 @@ public class RunFragment extends Fragment {
         sendButton.setOnClickListener(v -> {
             if (!file.isEmpty()) { // Generate the query using the AI selected
                 // Map the database
+                mapManager.mapDatabase();
 
                 String context = "You're a database assistant, I'll send you requests and you'll return a PostgeSQL query to do my request and if what I request can't be found on the database, tell me, but don't use more words. " +
                                 "This is the database: " +

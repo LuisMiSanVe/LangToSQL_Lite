@@ -1,9 +1,7 @@
 package com.luismisanve.langtosql;
 
 import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
