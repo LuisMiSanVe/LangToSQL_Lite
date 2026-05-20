@@ -1,4 +1,5 @@
 <resources>
+    <!--Layout-->
     <string name="app_name">LangToSQL</string>
     <string name="title_run">Run</string>
     <string name="title_maps">Maps</string>
@@ -19,4 +20,39 @@
     <string name="hint_model">Model…</string>
     <string name="text_nodb">No database selected.</string>
     <string name="check_show">Show advanced run query fields</string>
+    <!--Run-->
+    <string name="text_result">Send a query to get a result table</string>
+    <string name="error_load_sqlite">The configured SQLite database doesn\'t exist.</string>
+    <string name="error_load_io">Failed to access the configured SQLite database.</string>
+    <string name="error_load_prior">The prior result couldn\'t be loaded.</string>
+    <string name="text_generate">Generating…</string>
+    <string name="error_ai">The AI request couldn\'t be built because of an error.</string>
+    <string name="error_ai_format">The AI\'s answer format doesn\'t align with compatible Gemini or LLM.</string>
+    <string name="error_ai_available">The AI server is not available.</string>
+    <string name="error_ai_ask">An error occurred when asking the AI.</string>
+    <string name="error_api_format">The REST API\'s response couldn\'t be interpreted.</string>
+    <string name="error_api_code">The REST API returned error code </string>
+    <string name="error_api_available">The REST API is not reachable.</string>
+    <string name="error_run_query">The query failed: </string>
+    <string name="error_run">An error occurred: </string>
+    <string name="warning_direct_run">Direct queries can only be run in SQLite mode.</string>
+    <string name="text_clipboard">Value copied to clipboard.</string>
+    <!--Maps-->
+    <string name="text_mapping">Mapping database…</string>
+    <string name="text_mapped">The database has been mapped.</string>
+    <string name="text_map_delete">Do you want to delete the map of </string>
+    <string name="text_map_deletion">Delete map</string>
+    <string name="text_map_deletechoice">Delete</string>
+    <string name="text_map_cancelchoice">Cancel</string>
+    <!--Config-->
+    <string name="warning_api_override">REST API\'s AI settings will override.</string>
+    <string name="warning_config_requirement">Selected section\'s fields must be filled.</string>
+    <string name="text_saved">Settings saved.</string>
+    <string name="error_sqlite_format">The database file doesn\'t have the correct SQLite format.</string>
+    <string name="error_file_check">: The file couldn\'t be checked.</string>
+    <string name="error_sqlite_novalid">The selected file is not a valid SQLite database.</string>
+    <string name="text_unsaved">Unsaved changes</string>
+    <string name="warning_unsaved">You have unsaved changes, do you want to save them?\nData may not save if selected sections aren\'t fully filled.</string>
+    <string name="text_save">Save</string>
+    <string name="text_discard">Discard</string>
 </resources>

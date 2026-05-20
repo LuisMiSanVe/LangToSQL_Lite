@@ -6,14 +6,16 @@ import retrofit2.*;
 import retrofit2.converter.gson.*;
 
 public class RestApiClient {
-
+    // Attributes
     private static String BASE_URL = "";
     private static Retrofit retrofit;
 
+    // Builder
     public RestApiClient(String url){
         BASE_URL = url;
     }
 
+    // Methods
     public Retrofit getClient() {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()

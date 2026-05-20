@@ -52,6 +52,9 @@ The settings are separated in two blocks:
 
 You can also enable the direct run query fields to write your own SELECT queries and execute them in the SQLite Database. 
 
+>[!TIP]
+>If you're a developer and you are using Android Studio, remember the emulator reaches your localhost from the IP `10.0.2.2`, in normal phones you just have to put your device's public IP.
+
 ## 🚀 Releases
 The version will be released using these versioning policies:\
 New major features and critical bug fixes will cause the immediate release of a new version, while other minor changes or fixes will wait one week since the time the change is introduced in the repository before being included in the new version, so that other potential changes can be added.

@@ -6,12 +6,15 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class FileManager {
+    // Attributes
     private Context context;
 
+    // Builder
     public FileManager(Context _context){
         context = _context;
     }
 
+    // Methods
     public void writeToFile(String fileName, String data) {
         FileOutputStream fos = null;
         try {
@@ -46,6 +49,6 @@ public class FileManager {
             e.printStackTrace();
         }
 
-        return sb.toString();
+        return sb.toString().trim();
     }
 }

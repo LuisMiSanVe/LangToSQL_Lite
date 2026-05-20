@@ -35,7 +35,7 @@
                 android:layout_height="48dp"
                 android:focusable="true"
                 android:src="@drawable/send"
-                android:background="@color/white"
+                android:background="@android:drawable/editbox_background"
                 android:padding="6dp"
                 android:scaleType="centerInside"
                 android:clickable="true" />
@@ -89,6 +89,12 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp"
                     android:stretchColumns="*">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:text="@string/text_result"/>
 
                 </TableLayout>
             </ScrollView>

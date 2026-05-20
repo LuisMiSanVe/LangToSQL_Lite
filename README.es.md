@@ -52,6 +52,9 @@ Los ajustes están separados en dos bloques:
 
 Tambíen puedes activar los campos de sentencia directa, donde puedes escribir tus propios SELECT y ejecutarlos en la base de datos SQLite. 
 
+>[!TIP]
+>Si eres un desarrollador y estás usando Android Studio, recuerda que el emulador llega a tu localhost a través de la IP `10.0.2.2`, en un movil normal solo tendrías que poner la IP pública de tu equipo.
+
 ## 🚀 Lanzamientos
 Una versión será lanzada solo cuando se cumplan los siguientes puntos:\
 Nuevas funciones importantes y arreglos de fallos criticos causarán la salida inmediata de una nueva versión, mientras que otros cambios o arreglos menores deberán esperar una semana desde que se incluyeron en el repositorio antes de ser incluidos en la nueva versión, para que otros posibles cambios puedan ser añadidos también.

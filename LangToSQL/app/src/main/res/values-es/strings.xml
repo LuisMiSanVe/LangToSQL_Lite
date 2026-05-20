@@ -1,0 +1,58 @@
+<resources>
+    <!--Layout-->
+    <string name="app_name">LangToSQL</string>
+    <string name="title_run">Ejecutar</string>
+    <string name="title_maps">Mapas</string>
+    <string name="title_config">Ajustes</string>
+    <string name="hint_send">Solicitud…</string>
+    <string name="hint_run">Sentencia SQL…</string>
+    <string name="hint_file">Archivo SQLite…</string>
+    <string name="title_db">Ajustes de base de datos</string>
+    <string name="title_ai">Ajustes de IA</string>
+    <string name="hint_ip">Dirección IP…</string>
+    <string name="hint_port">Puerto…</string>
+    <string name="radio_SQLite">Usar archivo local de SQLite</string>
+    <string name="radio_API">Usar API REST de LangToSQL</string>
+    <string name="radio_Gemini">Usar API de Gemini</string>
+    <string name="radio_LLM">Usar servidor local de LLMs</string>
+    <string name="hint_key">Clave de API…</string>
+    <string name="check_key">Recordar clave de API</string>
+    <string name="hint_model">Modelo…</string>
+    <string name="text_nodb">No hay una base de datos seleccionada.</string>
+    <string name="check_show">Mostrar campos de ejecución avanzada</string>
+    <!--Run-->
+    <string name="text_result">Manda una solicitud para obtener una tabla con resultados</string>
+    <string name="error_load_sqlite">La base de datos SQLite configurada no existe.</string>
+    <string name="error_load_io">No se pudo acceder a la base de datos SQLite configurada.</string>
+    <string name="error_load_prior">El resultado anterior no se pudo cargar.</string>
+    <string name="text_generate">Generando…</string>
+    <string name="error_ai">La solicitud a la IA no se pudo crear por un error.</string>
+    <string name="error_ai_format">El formato de la respuesta de la IA no concuerda con los compatibles.</string>
+    <string name="error_ai_available">El servidor de IA no está disponible.</string>
+    <string name="error_ai_ask">Un error ocurrió al preguntar a la IA.</string>
+    <string name="error_api_format">La respuesta de la API REST no se pudo interpretar.</string>
+    <string name="error_api_code">La API REST devolvió el error </string>
+    <string name="error_api_available">No es posible conectarse a la API REST.</string>
+    <string name="error_run_query">La sentencia falló: </string>
+    <string name="error_run">Un error ocurrió: </string>
+    <string name="warning_direct_run">Sentencias directas solo pueden ser ejecutadas en SQLite.</string>
+    <string name="text_clipboard">Valor copiado al portapapeles.</string>
+    <!--Maps-->
+    <string name="text_mapping">Mapeando base de datos…</string>
+    <string name="text_mapped">La base de datos de ha mapeado.</string>
+    <string name="text_map_delete">¿Quieres eliminar el mapa de </string>
+    <string name="text_map_deletion">Eliminar mapa</string>
+    <string name="text_map_deletechoice">Eliminar</string>
+    <string name="text_map_cancelchoice">Cancelar</string>
+    <!--Config-->
+    <string name="warning_api_override">Los ajustes serán sobrescritos por los de la API REST.</string>
+    <string name="warning_config_requirement">Los campos de las secciones seleccionadas deben estar rellenos.</string>
+    <string name="text_saved">Ajustes guardados.</string>
+    <string name="error_sqlite_format">El archivo de base de datos no tiene el formato de SQLite.</string>
+    <string name="error_file_check">: El archivo no se pudo comprobar.</string>
+    <string name="error_sqlite_novalid">El archivo selecionado no es una base de datos SQLite válida.</string>
+    <string name="text_unsaved">Cambios sin guardar</string>
+    <string name="warning_unsaved">Tienes cambios sin guardar, ¿quieres guardar?\nEs posible que no se guarde si no has rellenado las secciones seleccionadas</string>
+    <string name="text_save">Guardar</string>
+    <string name="text_discard">Descartar</string>
+</resources>

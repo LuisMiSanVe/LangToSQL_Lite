@@ -1,9 +1,7 @@
 package com.luismisanve.langtosql.ui.config;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.*;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.*;
@@ -17,7 +15,6 @@ import androidx.activity.result.*;
 import androidx.activity.result.contract.*;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentConfigBinding;
 import com.luismisanve.langtosql.ui.run.RunFragment;
@@ -90,28 +87,29 @@ public class ConfigFragment extends Fragment {
                 if (Boolean.parseBoolean(dbConfig[0])) {
                     useSQLite.performClick();
                     useSQLite.setChecked(Boolean.parseBoolean(dbConfig[0]));
+                    fileText.setText(dbConfig[1]);
                 } else {
                     useApi.performClick();
                     useApi.setChecked(!Boolean.parseBoolean(dbConfig[0]));
+                    apiIpText.setText(dbConfig[2]);
+                    apiPortText.setText(dbConfig[3]);
                 }
-                fileText.setText(dbConfig[1]);
-                apiIpText.setText(dbConfig[2]);
-                apiPortText.setText(dbConfig[3]);
             }
             if (ai.exists()) {
                 String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
                 if (Boolean.parseBoolean(aiConfig[0])) {
                     useGemini.performClick();
                     useGemini.setChecked(Boolean.parseBoolean(aiConfig[0]));
+                    rememberCheck.setChecked(Boolean.parseBoolean(aiConfig[1]));
+                    if (rememberCheck.isChecked())
+                        geminiKeyText.setText(aiConfig[2]);
                 } else {
                     useLLM.performClick();
                     useLLM.setChecked(!Boolean.parseBoolean(aiConfig[0]));
+                    llmIpText.setText(aiConfig[3]);
+                    llmPortText.setText(aiConfig[4]);
+                    llmModelText.setText(aiConfig[5]);
                 }
-                rememberCheck.setChecked(Boolean.parseBoolean(aiConfig[1]));
-                geminiKeyText.setText(aiConfig[2]);
-                llmIpText.setText(aiConfig[3]);
-                llmPortText.setText(aiConfig[4]);
-                llmModelText.setText(aiConfig[5]);
             }
         });
 
@@ -146,7 +144,7 @@ public class ConfigFragment extends Fragment {
             llmPortText.setEnabled(false);
             llmModelText.setEnabled(false);
 
-            Toast.makeText(getContext(), "REST API's AI settings will override.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), R.string.warning_api_override, Toast.LENGTH_LONG).show();
         });
         useGemini.setOnClickListener(v -> {
             geminiKeyText.setEnabled(true);
@@ -176,14 +174,23 @@ public class ConfigFragment extends Fragment {
             filePickerLauncher.launch(intent);
         });
         saveButton.setOnClickListener(v -> {
-            StringBuilder dbSettingsFormat = buildDbSettings();
-            StringBuilder aiSettingsFormat = buildAiSettings();
+            if (useSQLite.isChecked() && (fileText.getText().toString().isEmpty()) ||
+                useApi.isChecked() && (apiIpText.getText().toString().isEmpty() || apiPortText.getText().toString().isEmpty()) ||
+                useGemini.isChecked() && (geminiKeyText.getText().toString().isEmpty()) ||
+                useLLM.isChecked() && (llmIpText.getText().toString().isEmpty() || llmPortText.getText().toString().isEmpty() || llmModelText.getText().toString().isEmpty())) {
+                // If any checked settings has its fields empty, it doesn't save and require the user to fill those fields
+                if (getContext() != null)
+                    Toast.makeText(requireContext().getApplicationContext(), R.string.warning_config_requirement, Toast.LENGTH_LONG).show();
+            } else {
+                StringBuilder dbSettingsFormat = buildDbSettings();
+                StringBuilder aiSettingsFormat = buildAiSettings();
 
-            fileManager.writeToFile("dbsettings.cfg", dbSettingsFormat.toString());
-            fileManager.writeToFile("aisettings.cfg", aiSettingsFormat.toString());
+                fileManager.writeToFile("dbsettings.cfg", dbSettingsFormat.toString());
+                fileManager.writeToFile("aisettings.cfg", aiSettingsFormat.toString());
 
-            if (getContext()!=null)
-                Toast.makeText(getContext(), "Settings saved.", Toast.LENGTH_SHORT).show();
+                if (getContext() != null)
+                    Toast.makeText(getContext(), R.string.text_saved, Toast.LENGTH_SHORT).show();
+            }
         });
         showQueryCheck.setOnClickListener(view -> {
             if (showQueryCheck.isChecked())
@@ -269,16 +276,16 @@ public class ConfigFragment extends Fragment {
                             fileText.setSelection(fileText.getText().length());
                         });
                     } else
-                        Toast.makeText(getContext(), "The database file doesn't have the correct SQLite format.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.error_sqlite_format, Toast.LENGTH_SHORT).show();
 
                     is.close();
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), "Error " + e.getClass() + ": The file couldn't be checked.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error " + e.getClass() + R.string.error_file_check, Toast.LENGTH_SHORT).show();
                 }
             } else
-                Toast.makeText(getContext(), "The selected file is not a valid SQLite database.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.error_sqlite_novalid, Toast.LENGTH_SHORT).show();
         } else
-            Toast.makeText(getContext(), "No database file has been selected.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.text_nodb, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -288,15 +295,15 @@ public class ConfigFragment extends Fragment {
         if (!buildDbSettings().toString().equals(fileManager.readFromFile("dbsettings.cfg")) ||
             !buildAiSettings().toString().equals(fileManager.readFromFile("aisettings.cfg"))) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Unsaved changes")
-                    .setMessage("You have unsaved changes, do you want to save them?")
-                    .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            builder.setTitle(R.string.text_unsaved)
+                    .setMessage(R.string.warning_unsaved)
+                    .setPositiveButton(R.string.text_save, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             saveButton.performClick();
                         }
                     })
-                    .setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.text_discard, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();

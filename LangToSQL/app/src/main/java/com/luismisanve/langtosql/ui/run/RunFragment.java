@@ -1,9 +1,11 @@
 package com.luismisanve.langtosql.ui.run;
 
+import android.content.*;
 import android.database.*;
 import android.database.sqlite.*;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
@@ -16,9 +18,6 @@ import static android.view.View.*;
 import org.json.*;
 import java.io.*;
 import okhttp3.*;
-import okhttp3.Call;
-import okhttp3.Response;
-import retrofit2.*;
 
 public class RunFragment extends Fragment {
     // Variables
@@ -39,6 +38,8 @@ public class RunFragment extends Fragment {
     private String llmIp = "";
     private String llmPort = "";
     private String llmModel = "";
+    private String json = "";
+    private String databaseName = "";
 
     // Initializer
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,11 +88,32 @@ public class RunFragment extends Fragment {
                         inputStream.close();
 
                         path = dbFile.getAbsolutePath();
+
+                        // Get database file name
+                        String name = "";
+                        if (uri.getScheme().equals("content")) {
+                            Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+                            try {
+                                if (cursor != null && cursor.moveToFirst()) {
+                                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                                    if (index != -1)
+                                        name = cursor.getString(index);
+                                }
+                            } finally {
+                                if (cursor != null)
+                                    cursor.close();
+                            }
+                        }
+
+                        if (name == null)
+                            name = uri.getLastPathSegment();
+
+                        databaseName = (name.contains(".")) ? name.split("\\.")[0] : name;
                     } catch (FileNotFoundException e) {
-                        Toast.makeText(getContext(), "The configured SQLite database doesn't exist.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.error_load_sqlite, Toast.LENGTH_SHORT).show();
                         path = "";
                     } catch (IOException e) {
-                        Toast.makeText(getContext(), "Failed to access the configured SQLite database.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.error_load_io, Toast.LENGTH_SHORT).show();
                         path = "";
                     }
                 }
@@ -111,7 +133,9 @@ public class RunFragment extends Fragment {
             String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
 
             if (Boolean.parseBoolean(aiConfig[0])) {
-                geminiKey = aiConfig[2];
+                geminiKey = "";
+                if (Boolean.parseBoolean(aiConfig[1]))
+                    geminiKey = aiConfig[2];
                 llmIp = "";
                 llmPort = "";
                 llmModel = "";
@@ -129,19 +153,43 @@ public class RunFragment extends Fragment {
                 Cursor priorCursor = jsonToCursor(priorJson);
                 buildTable(priorCursor);
             } catch (Exception e) {
-                Toast.makeText(getContext(), "The prior result couldn't be loaded.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.error_load_prior, Toast.LENGTH_SHORT).show();
             }
         }
 
+        String priorMap = runViewModel.getMap();
+        if (priorMap != null)
+            json = priorMap;
+
         // Events
         sendButton.setOnClickListener(v -> {
+            Toast.makeText(getContext(), R.string.text_generate, Toast.LENGTH_SHORT).show();
             if (!file.isEmpty()) { // Generate the query using the AI selected
                 // Map the database
-                mapManager.mapDatabase();
+                if (json.isEmpty()) {
+                    // Search for the mapped file
+                    if (!databaseName.isEmpty()) {
+                        File mapsFolder = getContext().getFilesDir();
+                        if (mapsFolder.exists()) {
+                            if (mapsFolder.listFiles().length > 0) {
+                                for (File map : mapsFolder.listFiles()) {
+                                    if (map.getName().contains(databaseName) && map.getName().contains(".map")) {
+                                        json = fileManager.readFromFile(map.getName());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // Else, it maps it
+                    if (json.isEmpty())
+                        json = mapManager.mapDatabase(getContext());
+
+                    runViewModel.setMap(json); // Save the map in memory
+                }
 
                 String context = "You're a database assistant, I'll send you requests and you'll return a PostgeSQL query to do my request and if what I request can't be found on the database, tell me, but don't use more words. " +
                                 "This is the database: " +
-                                //json +
+                                json +
                                 "\nAnd this is my request: ";
 
                 OkHttpClient client = new OkHttpClient();
@@ -166,7 +214,7 @@ public class RunFragment extends Fragment {
                         aibody = body;
                     } catch (JSONException e){
                         aibody = null;
-                        Toast.makeText(getContext(), "The AI request couldn't be built because of an error.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), R.string.error_ai, Toast.LENGTH_LONG).show();
                     }
                 } else {
                     endpoint = "http://" + llmIp + ":" + llmPort;
@@ -189,7 +237,7 @@ public class RunFragment extends Fragment {
                         aibody = body;
                     } catch (JSONException e){
                         aibody = null;
-                        Toast.makeText(getContext(), "The AI request couldn't be built because of an error.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), R.string.error_ai, Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -203,10 +251,6 @@ public class RunFragment extends Fragment {
                             ))
                             .addHeader("Content-Type", "application/json")
                             .build();
-
-                    // Execute request
-                    //okhttp3.Response response = client.newCall(requestHttp).execute();
-
 
                     client.newCall(requestHttp).enqueue(new okhttp3.Callback() {
                         @Override
@@ -250,12 +294,12 @@ public class RunFragment extends Fragment {
                                     });
                                 } catch (JSONException e) {
                                     getActivity().runOnUiThread(() -> {
-                                        Toast.makeText(getContext(), "The AI's answer format doesn't align with compatible Gemini or LLM.", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), R.string.error_ai_format, Toast.LENGTH_LONG).show();
                                     });
                                 }
                             } else {
                                 getActivity().runOnUiThread(() -> {
-                                    Toast.makeText(getContext(), "The AI server is not available.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), R.string.error_ai_available, Toast.LENGTH_LONG).show();
                                 });
                             }
                         }
@@ -263,12 +307,12 @@ public class RunFragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             getActivity().runOnUiThread(() -> {
-                                Toast.makeText(getContext(), "An error occurred when asking the AI.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), R.string.error_ai_ask, Toast.LENGTH_LONG).show();
                             });
                         }
                     });
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), "An error occurred when asking the AI.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.error_ai_ask, Toast.LENGTH_LONG).show();
                 }
             } else { // Generate the result in a PostgreSQL server using the LangToSQL REST API, overring its settings
                 RestApiCall api = new RestApiClient("http://" + apiIp + ":" + apiPort.trim() + "/").getClient().create(RestApiCall.class);
@@ -292,15 +336,15 @@ public class RunFragment extends Fragment {
 
                                 buildTable(cursor);
                             } catch (Exception e) {
-                                Toast.makeText(getContext(), "The REST API's response couldn't be interpreted.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), R.string.error_api_format, Toast.LENGTH_LONG).show();
                             }
                         } else
-                            Toast.makeText(getContext(), "The REST API returned error code " + response.code(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), R.string.error_api_code + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onFailure(retrofit2.Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(getContext(), "The REST API is not reachable.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), R.string.error_api_available, Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -316,18 +360,21 @@ public class RunFragment extends Fragment {
                 );
                 try {
                     cursor = sqliteDb.rawQuery(queryText.getText().toString(), null);
+
+                    runViewModel.setJson(cursorToJson(cursor));
+
+                    buildTable(jsonToCursor(runViewModel.getJson()));
+                    sqliteDb.close();
                 } catch (SQLiteException e) {
-                    Toast.makeText(getContext(), "The query failed: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.error_run_query + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                     queryText.setEnabled(true);
                     runButton.setEnabled(true);
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), R.string.error_run + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
-                sqliteDb.close();
             }
             else
-                Toast.makeText(getContext(), "Direct queries can only be run in SQLite mode.", Toast.LENGTH_SHORT).show();
-
-            if (cursor != null)
-                buildTable(cursor);
+                Toast.makeText(getContext(), R.string.warning_direct_run, Toast.LENGTH_SHORT).show();
         });
 
         return root;
@@ -384,10 +431,18 @@ public class RunFragment extends Fragment {
                         value = cursor.getString(i);
                         break;
                 }
-                tv.setText(value);
+                tv.setText(value.replace('\n', ' '));
                 tv.setPadding(8, 8, 8, 8);
                 tv.setBackgroundColor(0xFFEFEFEF);
                 tv.setGravity(Gravity.CENTER);
+                tv.setMaxLines(1);
+                tv.setOnClickListener(v -> {
+                    ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(getContext().CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("label", value);
+                    clipboard.setPrimaryClip(clip);
+
+                    Toast.makeText(getContext(), R.string.text_clipboard, Toast.LENGTH_SHORT).show();
+                });
 
                 row.addView(tv);
             }
@@ -426,6 +481,58 @@ public class RunFragment extends Fragment {
         }
 
         return cursor;
+    }
+
+    public static JSONArray cursorToJson(Cursor cursor) {
+
+        JSONArray result = new JSONArray();
+
+        if (cursor == null || !cursor.moveToFirst()) {
+            return result;
+        }
+
+        // IMPORTANT: use column names directly (stable schema)
+        String[] columns = cursor.getColumnNames();
+
+        do {
+            JSONObject obj = new JSONObject();
+
+            for (String column : columns) {
+                try {
+                    int index = cursor.getColumnIndex(column);
+
+                    if (cursor.isNull(index)) {
+                        obj.put(column, JSONObject.NULL);
+                        continue;
+                    }
+
+                    switch (cursor.getType(index)) {
+                        case Cursor.FIELD_TYPE_INTEGER:
+                            obj.put(column, cursor.getLong(index));
+                            break;
+                        case Cursor.FIELD_TYPE_FLOAT:
+                            obj.put(column, cursor.getDouble(index));
+                            break;
+                        case Cursor.FIELD_TYPE_STRING:
+                            obj.put(column, cursor.getString(index));
+                            break;
+                        case Cursor.FIELD_TYPE_BLOB:
+                            obj.put(column, null);
+                            break;
+                        case Cursor.FIELD_TYPE_NULL:
+                        default:
+                            obj.put(column, JSONObject.NULL);
+                            break;
+                    }
+                } catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+
+            result.put(obj);
+        } while (cursor.moveToNext());
+
+        return result;
     }
 
     // Destroyer

@@ -50,7 +50,7 @@
                 android:layout_height="48dp"
                 android:focusable="true"
                 android:src="@drawable/file"
-                android:background="@color/white"
+                android:background="@android:drawable/editbox_background"
                 android:padding="6dp"
                 android:scaleType="centerInside"
                 android:clickable="true" />
