@@ -325,26 +325,30 @@ public class ConfigFragment extends Fragment {
     public void onPause(){
         super.onPause();
         // Compare current settings with last saved to check for changes
-        if (!buildDbSettings().toString().equals(fileManager.readFromFile("dbsettings.cfg")) ||
-            !buildAiSettings().toString().equals(fileManager.readFromFile("aisettings.cfg"))) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle(R.string.text_unsaved)
-                    .setMessage(R.string.warning_unsaved)
-                    .setPositiveButton(R.string.text_save, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            saveButton.performClick();
-                        }
-                    })
-                    .setNegativeButton(R.string.text_discard, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+        if (fileManager.readFromFile("dbsettings.cfg")!=null || fileManager.readFromFile("aisettings.cfg")!=null) {
+            if (!fileManager.readFromFile("dbsettings.cfg").isEmpty() || !fileManager.readFromFile("aisettings.cfg").isEmpty()) {
+                if (!buildDbSettings().toString().equals(fileManager.readFromFile("dbsettings.cfg")) ||
+                        !buildAiSettings().toString().equals(fileManager.readFromFile("aisettings.cfg"))) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(R.string.text_unsaved)
+                            .setMessage(R.string.warning_unsaved)
+                            .setPositiveButton(R.string.text_save, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    saveButton.performClick();
+                                }
+                            })
+                            .setNegativeButton(R.string.text_discard, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
 
-            AlertDialog dialog = builder.create();
-            dialog.show();
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            }
         }
     }
 
