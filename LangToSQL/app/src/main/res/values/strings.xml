@@ -1,6 +1,6 @@
 <resources>
     <!--Layout-->
-    <string name="app_name">LangToSQL</string>
+    <string name="app_name">LangToSQL Lite</string>
     <string name="title_run">Run</string>
     <string name="title_maps">Maps</string>
     <string name="title_config">Config</string>
