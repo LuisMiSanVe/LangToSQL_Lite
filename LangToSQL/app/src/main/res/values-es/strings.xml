@@ -20,6 +20,7 @@
     <string name="hint_model">Modelo…</string>
     <string name="text_nodb">No hay una base de datos seleccionada.</string>
     <string name="check_show">Mostrar campos de ejecución avanzada</string>
+    <string name="title_currentdb">Base de datos actual</string>
     <!--Run-->
     <string name="text_result">Manda una solicitud para obtener una tabla con resultados</string>
     <string name="error_load_sqlite">La base de datos SQLite configurada no existe.</string>

@@ -20,6 +20,7 @@
     <string name="hint_model">Model…</string>
     <string name="text_nodb">No database selected.</string>
     <string name="check_show">Show advanced run query fields</string>
+    <string name="title_currentdb">Current database</string>
     <!--Run-->
     <string name="text_result">Send a query to get a result table</string>
     <string name="error_load_sqlite">The configured SQLite database doesn\'t exist.</string>
