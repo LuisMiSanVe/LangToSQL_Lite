@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentMapsBinding;
+import com.luismisanve.langtosql.ui.run.RunFragment;
 import java.io.*;
 
 public class MapsFragment extends Fragment {
@@ -123,7 +124,7 @@ public class MapsFragment extends Fragment {
                         tv.setOnLongClickListener(v -> {
                             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                             builder.setTitle(R.string.text_map_deletion)
-                            .setMessage(R.string.text_map_delete + mapName + "?")
+                            .setMessage(getString(R.string.text_map_delete) + " " + mapName + "?")
                             .setPositiveButton(R.string.text_map_deletechoice, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -142,6 +143,11 @@ public class MapsFragment extends Fragment {
                             dialog.show();
 
                             return false;
+                        });
+                        tv.setOnClickListener(view -> {
+                            RunFragment.json = "";
+                            RunFragment.selectedMap = tv.getText().toString();
+                            Toast.makeText(getContext(), tv.getText().toString() + " " + getString(R.string.text_map_selected), Toast.LENGTH_SHORT).show();
                         });
 
                         mapsLayout.addView(tv);

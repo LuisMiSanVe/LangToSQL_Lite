@@ -47,9 +47,7 @@ public class ConfigFragment extends Fragment {
     private final ActivityResultLauncher<Intent> filePickerLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        loadFile(result);
-                    });
+                    this::loadFile);
 
     // Initializer
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
@@ -182,10 +180,6 @@ public class ConfigFragment extends Fragment {
             intent.setType("*/*");
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {
-                    "application/octet-stream",
-                    "application/x-sqlite3"
-            });
 
             filePickerLauncher.launch(intent);
         });
@@ -319,7 +313,7 @@ public class ConfigFragment extends Fragment {
 
                     is.close();
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), "Error " + e.getClass() + R.string.error_file_check, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error " + e.getClass() + getString(R.string.error_file_check), Toast.LENGTH_SHORT).show();
                 }
             } else
                 Toast.makeText(getContext(), R.string.error_sqlite_novalid, Toast.LENGTH_SHORT).show();

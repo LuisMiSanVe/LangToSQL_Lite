@@ -28,7 +28,6 @@ public class RunFragment extends Fragment {
     private ImageButton runButton;
     private EditText queryText;
     private TableLayout tableLayout;
-    public static int showQuery = GONE;
     private FileManager fileManager;
     private MapManager mapManager;
     private String file = "";
@@ -38,8 +37,10 @@ public class RunFragment extends Fragment {
     private String llmIp = "";
     private String llmPort = "";
     private String llmModel = "";
-    private String json = "";
     private String databaseName = "";
+    public static int showQuery = GONE;
+    public static String selectedMap = "";
+    public static String json = "";
 
     // Initializer
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -166,6 +167,9 @@ public class RunFragment extends Fragment {
                 // Map the database
                 if (json.isEmpty()) {
                     // Search for the mapped file
+                    if (!selectedMap.isEmpty())
+                        databaseName = selectedMap;
+
                     if (!databaseName.isEmpty()) {
                         File mapsFolder = getContext().getFilesDir();
                         if (mapsFolder.exists()) {
@@ -178,6 +182,7 @@ public class RunFragment extends Fragment {
                             }
                         }
                     }
+
                     // Else, it maps it
                     if (json.isEmpty())
                         json = mapManager.mapDatabase(getContext());
@@ -337,7 +342,7 @@ public class RunFragment extends Fragment {
                                 Toast.makeText(getContext(), R.string.error_api_format, Toast.LENGTH_LONG).show();
                             }
                         } else
-                            Toast.makeText(getContext(), R.string.error_api_code + response.code(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getString(R.string.error_api_code) + " " + response.code(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -364,11 +369,11 @@ public class RunFragment extends Fragment {
                     buildTable(jsonToCursor(runViewModel.getJson()));
                     sqliteDb.close();
                 } catch (SQLiteException e) {
-                    Toast.makeText(getContext(), R.string.error_run_query + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getString(R.string.error_run_query) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                     queryText.setEnabled(true);
                     runButton.setEnabled(true);
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), R.string.error_run + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getString(R.string.error_run) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
             }
             else

@@ -67,7 +67,7 @@
                 android:layout_height="48dp"
                 android:focusable="true"
                 android:src="@drawable/run"
-                android:background="@color/white"
+                android:background="@drawable/outline_box"
                 android:padding="6dp"
                 android:scaleType="centerInside"
                 android:clickable="true" />

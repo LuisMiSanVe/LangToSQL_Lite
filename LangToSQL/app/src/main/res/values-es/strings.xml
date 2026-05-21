@@ -44,6 +44,7 @@
     <string name="text_map_deletion">Eliminar mapa</string>
     <string name="text_map_deletechoice">Eliminar</string>
     <string name="text_map_cancelchoice">Cancelar</string>
+    <string name="text_map_selected"> seleccionado para la siguiente solicitud</string>
     <!--Config-->
     <string name="warning_api_override">Los ajustes serán sobrescritos por los de la API REST.</string>
     <string name="warning_config_requirement">Los campos de las secciones seleccionadas deben estar rellenos.</string>

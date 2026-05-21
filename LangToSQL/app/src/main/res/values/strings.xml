@@ -44,6 +44,7 @@
     <string name="text_map_deletion">Delete map</string>
     <string name="text_map_deletechoice">Delete</string>
     <string name="text_map_cancelchoice">Cancel</string>
+    <string name="text_map_selected"> map selected for the next request</string>
     <!--Config-->
     <string name="warning_api_override">REST API\'s AI settings will override.</string>
     <string name="warning_config_requirement">Selected section\'s fields must be filled.</string>
