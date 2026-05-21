@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.*;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.text.InputType;
 import android.view.*;
 import android.widget.*;
 import androidx.activity.result.*;
@@ -161,6 +162,12 @@ public class ConfigFragment extends Fragment {
             llmIpText.setEnabled(false);
             llmPortText.setEnabled(false);
             llmModelText.setEnabled(false);
+        });
+        showCheck.setOnCheckedChangeListener((v, checked) -> {
+            if (checked)
+                geminiKeyText.setInputType(InputType.TYPE_CLASS_TEXT);
+            else
+                geminiKeyText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         });
         useLLM.setOnClickListener(v -> {
             geminiKeyText.setEnabled(false);
