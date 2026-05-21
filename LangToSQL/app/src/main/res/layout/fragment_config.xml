@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,154 +7,30 @@
     android:padding="8dp"
     tools:context=".ui.config.ConfigFragment">
 
-    <TextView
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/title_db"
-        android:textSize="20sp"/>
+        android:orientation="vertical">
 
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/outline_box"
-        android:padding="8dp"
-        android:saveEnabled="false">
-
-        <RadioButton
-            android:id="@+id/useSQLite"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/radio_SQLite"
-            android:checked="true"/>
+            android:text="@string/title_db"
+            android:textSize="20sp"/>
 
-        <LinearLayout
+        <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="4dp">
+            android:background="@drawable/outline_box"
+            android:padding="8dp"
+            android:saveEnabled="false">
 
-            <EditText
-                android:id="@+id/fileText"
-                android:inputType="text"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:background="@android:drawable/editbox_background"
-                android:padding="10dp"
-                android:hint="@string/hint_file" />
-
-            <ImageButton
-                android:id="@+id/fileButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:focusable="true"
-                android:src="@drawable/file"
-                android:background="@android:drawable/editbox_background"
-                android:padding="6dp"
-                android:scaleType="centerInside"
-                android:clickable="true" />
-
-        </LinearLayout>
-
-        <RadioButton
-            android:id="@+id/useApi"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/radio_API"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="4dp">
-
-            <EditText
-                android:id="@+id/apiIpText"
-                android:inputType="text"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:background="@android:drawable/editbox_background"
-                android:padding="10dp"
-                android:hint="@string/hint_ip"
-                android:enabled="false"/>
-
-            <EditText
-                android:id="@+id/apiPortText"
-                android:inputType="text"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:background="@android:drawable/editbox_background"
-                android:padding="10dp"
-                android:hint="@string/hint_port"
-                android:enabled="false"/>
-        </LinearLayout>
-
-    </RadioGroup>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/title_ai"
-        android:textSize="20sp"/>
-
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/outline_box"
-        android:padding="8dp"
-        android:saveEnabled="false">
-
-        <RadioButton
-            android:id="@+id/useGemini"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/radio_Gemini"
-            android:checked="true"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="4dp">
-
-            <EditText
-                android:id="@+id/geminiKeyText"
-                android:inputType="text"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:background="@android:drawable/editbox_background"
-                android:padding="10dp"
-                android:hint="@string/hint_key" />
-
-            <CheckBox
-                android:id="@+id/rememberCheck"
+            <RadioButton
+                android:id="@+id/useSQLite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="6dp"
-                android:scaleType="centerInside"
-                android:text="@string/check_key"/>
-
-        </LinearLayout>
-
-        <RadioButton
-            android:id="@+id/useLLM"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/radio_LLM"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="4dp">
+                android:text="@string/radio_SQLite"
+                android:checked="true"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -163,79 +39,210 @@
                 android:padding="4dp">
 
                 <EditText
-                    android:id="@+id/llmIpText"
+                    android:id="@+id/fileText"
                     android:inputType="text"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    android:background="@android:drawable/editbox_background"
+                    android:background="@drawable/outline_box"
+                    android:padding="10dp"
+                    android:hint="@string/hint_file" />
+
+                <ImageButton
+                    android:id="@+id/fileButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:focusable="true"
+                    android:src="@drawable/file"
+                    android:background="@drawable/outline_box"
+                    android:padding="6dp"
+                    android:scaleType="centerInside"
+                    android:clickable="true" />
+
+            </LinearLayout>
+
+            <RadioButton
+                android:id="@+id/useApi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_API"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <EditText
+                    android:id="@+id/apiIpText"
+                    android:inputType="text"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/outline_box"
                     android:padding="10dp"
                     android:hint="@string/hint_ip"
                     android:enabled="false"/>
 
                 <EditText
-                    android:id="@+id/llmPortText"
+                    android:id="@+id/apiPortText"
                     android:inputType="text"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    android:background="@android:drawable/editbox_background"
+                    android:background="@drawable/outline_box"
                     android:padding="10dp"
                     android:hint="@string/hint_port"
+                    android:enabled="false"/>
+            </LinearLayout>
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/title_ai"
+            android:textSize="20sp"/>
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/outline_box"
+            android:padding="8dp"
+            android:saveEnabled="false">
+
+            <RadioButton
+                android:id="@+id/useGemini"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_Gemini"
+                android:checked="true"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="4dp">
+
+                <EditText
+                    android:id="@+id/geminiKeyText"
+                    android:inputType="text"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/outline_box"
+                    android:padding="10dp"
+                    android:hint="@string/hint_key" />
+
+                <CheckBox
+                    android:id="@+id/showCheck"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="6dp"
+                    android:scaleType="centerInside"
+                    android:text="@string/show_key"/>
+
+            </LinearLayout>
+
+            <RadioButton
+                android:id="@+id/useLLM"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_LLM"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="4dp">
+
+                    <EditText
+                        android:id="@+id/llmIpText"
+                        android:inputType="text"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/outline_box"
+                        android:padding="10dp"
+                        android:hint="@string/hint_ip"
+                        android:enabled="false"/>
+
+                    <EditText
+                        android:id="@+id/llmPortText"
+                        android:inputType="text"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/outline_box"
+                        android:padding="10dp"
+                        android:hint="@string/hint_port"
+                        android:enabled="false"/>
+
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/llmModelText"
+                    android:inputType="text"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/outline_box"
+                    android:padding="10dp"
+                    android:hint="@string/hint_model"
                     android:enabled="false"/>
 
             </LinearLayout>
 
-            <EditText
-                android:id="@+id/llmModelText"
-                android:inputType="text"
-                android:layout_width="match_parent"
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <CheckBox
+                android:id="@+id/showQueryCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:padding="6dp"
+                android:scaleType="centerInside"
+                android:text="@string/check_show"/>
+
+            <View
+                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:background="@android:drawable/editbox_background"
-                android:padding="10dp"
-                android:hint="@string/hint_model"
-                android:enabled="false"/>
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/saveButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:focusable="true"
+                android:src="@drawable/save"
+                android:background="@drawable/outline_box"
+                android:layout_marginTop="10dp"
+                android:padding="6dp"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:layout_gravity="end"/>
 
         </LinearLayout>
 
-    </RadioGroup>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="4dp">
-
-        <CheckBox
-            android:id="@+id/showQueryCheck"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:padding="6dp"
-            android:scaleType="centerInside"
-            android:text="@string/check_show"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <ImageButton
-            android:id="@+id/saveButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:focusable="true"
-            android:src="@drawable/save"
-            android:background="@drawable/outline_box"
-            android:layout_marginTop="10dp"
-            android:padding="6dp"
-            android:scaleType="centerInside"
-            android:clickable="true"
-            android:layout_gravity="end"/>
-
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

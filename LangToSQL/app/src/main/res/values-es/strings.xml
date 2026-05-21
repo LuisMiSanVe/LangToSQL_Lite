@@ -16,7 +16,7 @@
     <string name="radio_Gemini">Usar API de Gemini</string>
     <string name="radio_LLM">Usar servidor local de LLMs</string>
     <string name="hint_key">Clave de API…</string>
-    <string name="check_key">Recordar clave de API</string>
+    <string name="show_key">Mostrar clave de API</string>
     <string name="hint_model">Modelo…</string>
     <string name="text_nodb">No hay una base de datos seleccionada.</string>
     <string name="check_show">Mostrar campos de ejecución avanzada</string>
@@ -55,4 +55,8 @@
     <string name="warning_unsaved">Tienes cambios sin guardar, ¿quieres guardar?\nEs posible que no se guarde si no has rellenado las secciones seleccionadas</string>
     <string name="text_save">Guardar</string>
     <string name="text_discard">Descartar</string>
+    <string name="error_file_format">El formato de la ruta del archivo no es válida para Android</string>
+    <string name="error_ip_format">La dirección IPv4 no tiene un formato válido</string>
+    <string name="error_port_format">El puerto no tiene un formato válido</string>
+    <string name="error_gemini_format">La clave de API de Gemini no tiene un formato válido</string>
 </resources>

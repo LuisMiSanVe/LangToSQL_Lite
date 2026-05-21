@@ -19,6 +19,7 @@ import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentConfigBinding;
 import com.luismisanve.langtosql.ui.run.RunFragment;
 import java.io.*;
+import java.util.regex.*;
 
 public class ConfigFragment extends Fragment {
     // Variables
@@ -31,7 +32,7 @@ public class ConfigFragment extends Fragment {
     private EditText apiPortText;
     private RadioButton useGemini;
     private EditText geminiKeyText;
-    private CheckBox rememberCheck;
+    private CheckBox showCheck;
     private RadioButton useLLM;
     private EditText llmIpText;
     private EditText llmPortText;
@@ -39,6 +40,9 @@ public class ConfigFragment extends Fragment {
     private ImageButton saveButton;
     private CheckBox showQueryCheck;
     private FileManager fileManager;
+    private String oldData;
+    private final String ipFormat = "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$";
+    private final String portFormat = "^(6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]?\\d{1,4})$";
     private final ActivityResultLauncher<Intent> filePickerLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
@@ -67,7 +71,7 @@ public class ConfigFragment extends Fragment {
         // Gemini
         useGemini = root.findViewById(R.id.useGemini);
         geminiKeyText = root.findViewById(R.id.geminiKeyText);
-        rememberCheck = root.findViewById(R.id.rememberCheck);
+        showCheck = root.findViewById(R.id.showCheck);
         // LLM
         useLLM = root.findViewById(R.id.useLLM);
         llmIpText = root.findViewById(R.id.llmIpText);
@@ -87,29 +91,34 @@ public class ConfigFragment extends Fragment {
                 if (Boolean.parseBoolean(dbConfig[0])) {
                     useSQLite.performClick();
                     useSQLite.setChecked(Boolean.parseBoolean(dbConfig[0]));
-                    fileText.setText(dbConfig[1]);
                 } else {
                     useApi.performClick();
                     useApi.setChecked(!Boolean.parseBoolean(dbConfig[0]));
-                    apiIpText.setText(dbConfig[2]);
-                    apiPortText.setText(dbConfig[3]);
                 }
+                if (dbConfig.length > 1)
+                    fileText.setText(dbConfig[1]);
+                if (dbConfig.length > 2)
+                    apiIpText.setText(dbConfig[2]);
+                if (dbConfig.length > 3)
+                    apiPortText.setText(dbConfig[3]);
             }
             if (ai.exists()) {
                 String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
                 if (Boolean.parseBoolean(aiConfig[0])) {
                     useGemini.performClick();
                     useGemini.setChecked(Boolean.parseBoolean(aiConfig[0]));
-                    rememberCheck.setChecked(Boolean.parseBoolean(aiConfig[1]));
-                    if (rememberCheck.isChecked())
-                        geminiKeyText.setText(aiConfig[2]);
                 } else {
                     useLLM.performClick();
                     useLLM.setChecked(!Boolean.parseBoolean(aiConfig[0]));
-                    llmIpText.setText(aiConfig[3]);
-                    llmPortText.setText(aiConfig[4]);
-                    llmModelText.setText(aiConfig[5]);
                 }
+                if (aiConfig.length > 1)
+                    geminiKeyText.setText(aiConfig[1]);
+                if (aiConfig.length > 2)
+                    llmIpText.setText(aiConfig[2]);
+                if (aiConfig.length > 3)
+                    llmPortText.setText(aiConfig[3]);
+                if (aiConfig.length > 4)
+                    llmModelText.setText(aiConfig[4]);
             }
         });
 
@@ -123,7 +132,7 @@ public class ConfigFragment extends Fragment {
 
             useGemini.setEnabled(true);
             geminiKeyText.setEnabled(true);
-            rememberCheck.setEnabled(true);
+            showCheck.setEnabled(true);
             useLLM.setEnabled(true);
             llmIpText.setEnabled(true);
             llmPortText.setEnabled(true);
@@ -138,7 +147,7 @@ public class ConfigFragment extends Fragment {
 
             useGemini.setEnabled(false);
             geminiKeyText.setEnabled(false);
-            rememberCheck.setEnabled(false);
+            showCheck.setEnabled(false);
             useLLM.setEnabled(false);
             llmIpText.setEnabled(false);
             llmPortText.setEnabled(false);
@@ -148,14 +157,14 @@ public class ConfigFragment extends Fragment {
         });
         useGemini.setOnClickListener(v -> {
             geminiKeyText.setEnabled(true);
-            rememberCheck.setEnabled(true);
+            showCheck.setEnabled(true);
             llmIpText.setEnabled(false);
             llmPortText.setEnabled(false);
             llmModelText.setEnabled(false);
         });
         useLLM.setOnClickListener(v -> {
             geminiKeyText.setEnabled(false);
-            rememberCheck.setEnabled(false);
+            showCheck.setEnabled(false);
             llmIpText.setEnabled(true);
             llmPortText.setEnabled(true);
             llmModelText.setEnabled(true);
@@ -192,11 +201,29 @@ public class ConfigFragment extends Fragment {
                     Toast.makeText(getContext(), R.string.text_saved, Toast.LENGTH_SHORT).show();
             }
         });
-        showQueryCheck.setOnClickListener(view -> {
+        showQueryCheck.setOnClickListener(v -> {
             if (showQueryCheck.isChecked())
                 RunFragment.showQuery = VISIBLE;
             else
                 RunFragment.showQuery = GONE;
+        });
+        fileText.setOnFocusChangeListener((v, focused) -> {
+            checkFormat(focused, fileText, R.string.error_file_format, "^content://.*");
+        });
+        apiIpText.setOnFocusChangeListener((v, focused) -> {
+            checkFormat(focused, apiIpText, R.string.error_ip_format, ipFormat);
+        });
+        apiPortText.setOnFocusChangeListener((v, focused) -> {
+            checkFormat(focused, apiPortText, R.string.error_port_format, portFormat);
+        });
+        geminiKeyText.setOnFocusChangeListener((v, focused) -> {
+            checkFormat(focused, geminiKeyText, R.string.error_gemini_format, "^AIza[0-9A-Za-z_-]{35}$");
+        });
+        llmIpText.setOnFocusChangeListener((v, focused) -> {
+            checkFormat(focused, llmIpText, R.string.error_ip_format, ipFormat);
+        });
+        llmPortText.setOnFocusChangeListener((v, focused) -> {
+            checkFormat(focused, llmPortText, R.string.error_port_format, portFormat);
         });
 
         return root;
@@ -211,17 +238,22 @@ public class ConfigFragment extends Fragment {
     }
 
     private StringBuilder buildAiSettings(){
-        StringBuilder aiSettingsFormat = new StringBuilder();
+        return new StringBuilder().append(useGemini.isChecked()).append(";")
+                                    .append(geminiKeyText.getText()).append(";")
+                                    .append(llmIpText.getText()).append(";")
+                                    .append(llmPortText.getText()).append(";")
+                                    .append(llmModelText.getText());
+    }
 
-        aiSettingsFormat.append(useGemini.isChecked()).append(";");
-        aiSettingsFormat.append(rememberCheck.isChecked()).append(";");
-        if (rememberCheck.isChecked())
-            aiSettingsFormat.append(geminiKeyText.getText());
-        aiSettingsFormat.append(";").append(llmIpText.getText()).append(";");
-        aiSettingsFormat.append(llmPortText.getText()).append(";");
-        aiSettingsFormat.append(llmModelText.getText());
-
-        return aiSettingsFormat;
+    private void checkFormat(boolean focusState, EditText editText, int errorMessageResource, String checkPattern){
+        if(focusState)
+            oldData = editText.getText().toString();
+        else {
+            if (!Pattern.compile(checkPattern).matcher(editText.getText().toString()).matches()) {
+                editText.setText(oldData);
+                Toast.makeText(getContext(), errorMessageResource, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @SuppressLint("WrongConstant")

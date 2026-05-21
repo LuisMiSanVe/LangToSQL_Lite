@@ -16,7 +16,7 @@
     <string name="radio_Gemini">Use Gemini API</string>
     <string name="radio_LLM">Use LLM local server</string>
     <string name="hint_key">API Key…</string>
-    <string name="check_key">Remember API Key</string>
+    <string name="show_key">Show API Key</string>
     <string name="hint_model">Model…</string>
     <string name="text_nodb">No database selected.</string>
     <string name="check_show">Show advanced run query fields</string>
@@ -55,4 +55,8 @@
     <string name="warning_unsaved">You have unsaved changes, do you want to save them?\nData may not save if selected sections aren\'t fully filled.</string>
     <string name="text_save">Save</string>
     <string name="text_discard">Discard</string>
+    <string name="error_file_format">The file path format is not a valid Android path</string>
+    <string name="error_ip_format">The IPv4 address doesn\'t have a valid format</string>
+    <string name="error_port_format">The port doesn\'t have a valid format</string>
+    <string name="error_gemini_format">The Gemini API Key doesn\'t have a valid format</string>
 </resources>

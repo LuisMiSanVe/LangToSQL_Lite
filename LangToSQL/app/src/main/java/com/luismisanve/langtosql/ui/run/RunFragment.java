@@ -133,16 +133,14 @@ public class RunFragment extends Fragment {
             String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
 
             if (Boolean.parseBoolean(aiConfig[0])) {
-                geminiKey = "";
-                if (Boolean.parseBoolean(aiConfig[1]))
-                    geminiKey = aiConfig[2];
+                geminiKey = aiConfig[1];
                 llmIp = "";
                 llmPort = "";
                 llmModel = "";
             } else {
-                llmIp = aiConfig[3];
-                llmPort = aiConfig[4];
-                llmModel = aiConfig[5];
+                llmIp = aiConfig[2];
+                llmPort = aiConfig[3];
+                llmModel = aiConfig[4];
                 geminiKey = "";
             }
         }
@@ -433,7 +431,7 @@ public class RunFragment extends Fragment {
                 }
                 tv.setText(value.replace('\n', ' '));
                 tv.setPadding(8, 8, 8, 8);
-                tv.setBackgroundColor(0xFFEFEFEF);
+                tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.outline_cell));
                 tv.setGravity(Gravity.CENTER);
                 tv.setMaxLines(1);
                 tv.setOnClickListener(v -> {
