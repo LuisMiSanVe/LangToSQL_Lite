@@ -28,7 +28,7 @@
     <string name="error_load_prior">The prior result couldn\'t be loaded.</string>
     <string name="text_generate">Generating…</string>
     <string name="error_ai">The AI request couldn\'t be built because of an error.</string>
-    <string name="error_ai_format">The AI\'s answer format doesn\'t align with compatible Gemini or LLM.</string>
+    <string name="error_ai_format">The AI\'s answer is not compatible with Gemini or LLM.</string>
     <string name="error_ai_available">The AI server is not available.</string>
     <string name="error_ai_ask">An error occurred when asking the AI.</string>
     <string name="error_api_format">The REST API\'s response couldn\'t be interpreted.</string>
@@ -38,6 +38,9 @@
     <string name="error_run">An error occurred: </string>
     <string name="warning_direct_run">Direct queries can only be run in SQLite mode.</string>
     <string name="text_clipboard">Value copied to clipboard.</string>
+    <string name="error_data">No data could be retrieved.</string>
+    <string name="error_ai_save">No AI config was saved.</string>
+    <string name="error_db_save">No Database config was saved.</string>
     <!--Maps-->
     <string name="text_mapping">Mapping database…</string>
     <string name="text_mapped">The database has been mapped.</string>
@@ -46,11 +49,12 @@
     <string name="text_map_deletechoice">Delete</string>
     <string name="text_map_cancelchoice">Cancel</string>
     <string name="text_map_selected"> map selected for the next request</string>
+    <string name="error_nosqlite">No SQLite database was found.</string>
     <!--Config-->
     <string name="warning_api_override">REST API\'s AI settings will override.</string>
     <string name="warning_config_requirement">Selected section\'s fields must be filled.</string>
     <string name="text_saved">Settings saved.</string>
-    <string name="error_sqlite_format">The database file doesn\'t have the correct SQLite format.</string>
+    <string name="error_sqlite_format">The file doesn\'t have the correct SQLite format.</string>
     <string name="error_file_check">: The file couldn\'t be checked.</string>
     <string name="error_sqlite_novalid">The selected file is not a valid SQLite database.</string>
     <string name="text_unsaved">Unsaved changes</string>
@@ -61,4 +65,5 @@
     <string name="error_ip_format">The IPv4 address doesn\'t have a valid format</string>
     <string name="error_port_format">The port doesn\'t have a valid format</string>
     <string name="error_gemini_format">The Gemini API Key doesn\'t have a valid format</string>
+    <string name="error_file_internal">An internal file error occurred: </string>
 </resources>

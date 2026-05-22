@@ -44,10 +44,10 @@ public class MapManager {
 
                         path = dbFile.getAbsolutePath();
                     } catch (FileNotFoundException e) {
-                        Toast.makeText(context, "The configured SQLite database doesn't exist.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.error_load_sqlite, Toast.LENGTH_SHORT).show();
                         path = "";
                     } catch (IOException e) {
-                        Toast.makeText(context, "Failed to access the configured SQLite database.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.error_load_io, Toast.LENGTH_SHORT).show();
                         path = "";
                     }
                 } else
@@ -80,7 +80,7 @@ public class MapManager {
                 // Columns
                 for (String tableName : tables.keySet())
                 {
-                    Cursor columnsDB = sqliteDb.rawQuery("PRAGMA table_info(\'" + tableName + "\')", null);
+                    Cursor columnsDB = sqliteDb.rawQuery("PRAGMA table_info('" + tableName + "')", null);
 
                     List<String> columns = new ArrayList<String>();
 
@@ -109,11 +109,11 @@ public class MapManager {
                         .create();
                 map = gson.toJson(tables);
             } catch (SQLiteException e) {
-                Toast.makeText(context, "The query failed: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, context.getString(R.string.error_run_query) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
             sqliteDb.close();
         } else {
-            Toast.makeText(context, "No SQLite database was found.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.error_nosqlite, Toast.LENGTH_SHORT).show();
         }
 
         return map;

@@ -28,7 +28,7 @@
     <string name="error_load_prior">El resultado anterior no se pudo cargar.</string>
     <string name="text_generate">Generando…</string>
     <string name="error_ai">La solicitud a la IA no se pudo crear por un error.</string>
-    <string name="error_ai_format">El formato de la respuesta de la IA no concuerda con los compatibles.</string>
+    <string name="error_ai_format">La respuesta de la IA no es compatible con Gemini o LLM.</string>
     <string name="error_ai_available">El servidor de IA no está disponible.</string>
     <string name="error_ai_ask">Un error ocurrió al preguntar a la IA.</string>
     <string name="error_api_format">La respuesta de la API REST no se pudo interpretar.</string>
@@ -36,8 +36,11 @@
     <string name="error_api_available">No es posible conectarse a la API REST.</string>
     <string name="error_run_query">La sentencia falló: </string>
     <string name="error_run">Un error ocurrió: </string>
-    <string name="warning_direct_run">Sentencias directas solo pueden ser ejecutadas en SQLite.</string>
+    <string name="warning_direct_run">Las sentencias solo pueden ser ejecutadas con SQLite.</string>
     <string name="text_clipboard">Valor copiado al portapapeles.</string>
+    <string name="error_data">No se pudo devolver ningún dato.</string>
+    <string name="error_ai_save">No se ha guardado ninguna configuración de IA.</string>
+    <string name="error_db_save">No se ha guardado ninguna configuración de base de datos.</string>
     <!--Maps-->
     <string name="text_mapping">Mapeando base de datos…</string>
     <string name="text_mapped">La base de datos de ha mapeado.</string>
@@ -46,19 +49,21 @@
     <string name="text_map_deletechoice">Eliminar</string>
     <string name="text_map_cancelchoice">Cancelar</string>
     <string name="text_map_selected"> seleccionado para la siguiente solicitud</string>
+    <string name="error_nosqlite">No se ha encontrado la base de datos SQLite.</string>
     <!--Config-->
     <string name="warning_api_override">Los ajustes serán sobrescritos por los de la API REST.</string>
-    <string name="warning_config_requirement">Los campos de las secciones seleccionadas deben estar rellenos.</string>
+    <string name="warning_config_requirement">Las secciones seleccionadas deben estar rellenas.</string>
     <string name="text_saved">Ajustes guardados.</string>
     <string name="error_sqlite_format">El archivo de base de datos no tiene el formato de SQLite.</string>
     <string name="error_file_check">: El archivo no se pudo comprobar.</string>
     <string name="error_sqlite_novalid">El archivo selecionado no es una base de datos SQLite válida.</string>
     <string name="text_unsaved">Cambios sin guardar</string>
-    <string name="warning_unsaved">Tienes cambios sin guardar, ¿quieres guardar?\nEs posible que no se guarde si no has rellenado las secciones seleccionadas</string>
+    <string name="warning_unsaved">Tienes cambios sin guardar, ¿quieres guardar?\nEs posible que no se guarde si no has rellenado las secciones seleccionadas.</string>
     <string name="text_save">Guardar</string>
     <string name="text_discard">Descartar</string>
-    <string name="error_file_format">El formato de la ruta del archivo no es válida para Android</string>
+    <string name="error_file_format">La ruta del archivo no tiene un formato válido de Android</string>
     <string name="error_ip_format">La dirección IPv4 no tiene un formato válido</string>
     <string name="error_port_format">El puerto no tiene un formato válido</string>
     <string name="error_gemini_format">La clave de API de Gemini no tiene un formato válido</string>
+    <string name="error_file_internal">Un error interno de los ficheros ocurrió: </string>
 </resources>

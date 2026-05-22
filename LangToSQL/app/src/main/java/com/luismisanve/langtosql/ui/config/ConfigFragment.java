@@ -42,6 +42,7 @@ public class ConfigFragment extends Fragment {
     private CheckBox showQueryCheck;
     private FileManager fileManager;
     private String oldData;
+    private boolean searchingFile = false;
     private final String ipFormat = "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$";
     private final String portFormat = "^(6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]?\\d{1,4})$";
     private final ActivityResultLauncher<Intent> filePickerLauncher =
@@ -83,41 +84,45 @@ public class ConfigFragment extends Fragment {
         // Apply saved config after root is loaded
         root.post(() -> {
             fileManager = new FileManager(getContext());
-            File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
-            File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
-            if (db.exists()) {
-                String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
-                if (Boolean.parseBoolean(dbConfig[0])) {
-                    useSQLite.performClick();
-                    useSQLite.setChecked(Boolean.parseBoolean(dbConfig[0]));
-                } else {
-                    useApi.performClick();
-                    useApi.setChecked(!Boolean.parseBoolean(dbConfig[0]));
+            try {
+                File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
+                File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
+                if (db.exists()) {
+                    String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
+                    if (Boolean.parseBoolean(dbConfig[0])) {
+                        useSQLite.performClick();
+                        useSQLite.setChecked(Boolean.parseBoolean(dbConfig[0]));
+                    } else {
+                        useApi.performClick();
+                        useApi.setChecked(!Boolean.parseBoolean(dbConfig[0]));
+                    }
+                    if (dbConfig.length > 1)
+                        fileText.setText(dbConfig[1]);
+                    if (dbConfig.length > 2)
+                        apiIpText.setText(dbConfig[2]);
+                    if (dbConfig.length > 3)
+                        apiPortText.setText(dbConfig[3]);
                 }
-                if (dbConfig.length > 1)
-                    fileText.setText(dbConfig[1]);
-                if (dbConfig.length > 2)
-                    apiIpText.setText(dbConfig[2]);
-                if (dbConfig.length > 3)
-                    apiPortText.setText(dbConfig[3]);
-            }
-            if (ai.exists()) {
-                String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
-                if (Boolean.parseBoolean(aiConfig[0])) {
-                    useGemini.performClick();
-                    useGemini.setChecked(Boolean.parseBoolean(aiConfig[0]));
-                } else {
-                    useLLM.performClick();
-                    useLLM.setChecked(!Boolean.parseBoolean(aiConfig[0]));
+                if (ai.exists()) {
+                    String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
+                    if (Boolean.parseBoolean(aiConfig[0])) {
+                        useGemini.performClick();
+                        useGemini.setChecked(Boolean.parseBoolean(aiConfig[0]));
+                    } else {
+                        useLLM.performClick();
+                        useLLM.setChecked(!Boolean.parseBoolean(aiConfig[0]));
+                    }
+                    if (aiConfig.length > 1)
+                        geminiKeyText.setText(aiConfig[1]);
+                    if (aiConfig.length > 2)
+                        llmIpText.setText(aiConfig[2]);
+                    if (aiConfig.length > 3)
+                        llmPortText.setText(aiConfig[3]);
+                    if (aiConfig.length > 4)
+                        llmModelText.setText(aiConfig[4]);
                 }
-                if (aiConfig.length > 1)
-                    geminiKeyText.setText(aiConfig[1]);
-                if (aiConfig.length > 2)
-                    llmIpText.setText(aiConfig[2]);
-                if (aiConfig.length > 3)
-                    llmPortText.setText(aiConfig[3]);
-                if (aiConfig.length > 4)
-                    llmModelText.setText(aiConfig[4]);
+            } catch (NullPointerException e) {
+                Toast.makeText(getContext(), R.string.error_data, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -175,6 +180,8 @@ public class ConfigFragment extends Fragment {
             llmModelText.setEnabled(true);
         });
         fileButton.setOnClickListener(v -> {
+            searchingFile = true;
+
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
@@ -259,94 +266,101 @@ public class ConfigFragment extends Fragment {
 
     @SuppressLint("WrongConstant")
     private void loadFile(ActivityResult result){
-        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+        try {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                Uri uri = result.getData().getData();
+                // Save permissions
+                final int takeFlags = result.getData().getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                getContext().getContentResolver().takePersistableUriPermission(uri, takeFlags);
 
-            Uri uri = result.getData().getData();
-            // Save permissions
-            final int takeFlags = result.getData().getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            getContext().getContentResolver().takePersistableUriPermission(uri, takeFlags);
+                String name = null;
 
-            String name = null;
+                Cursor cursor = getContext().getContentResolver().query(
+                        uri,
+                        null,
+                        null,
+                        null,
+                        null
+                );
 
-            Cursor cursor = getContext().getContentResolver().query(
-                    uri,
-                    null,
-                    null,
-                    null,
-                    null
-            );
+                if (cursor != null && cursor.moveToFirst()) {
 
-            if (cursor != null && cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 
-                int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    name = cursor.getString(index);
 
-                name = cursor.getString(index);
-
-                cursor.close();
-            }
-
-            if (name != null &&
-                    (name.endsWith(".db") ||
-                            name.endsWith(".sqlite") ||
-                            name.endsWith(".sqlite3") ||
-                            name.endsWith(".db3"))) {
-
-                try {
-                    InputStream is = getContext().getContentResolver().openInputStream(uri);
-
-                    byte[] header = new byte[16];
-
-                    is.read(header);
-
-                    String headerText = new String(header);
-
-                    if (headerText.startsWith("SQLite format 3")) {
-
-                        String fileUri = uri.toString();
-
-                        fileText.setText(fileUri);
-                        fileText.post(() -> {
-                            fileText.setSelection(fileText.getText().length());
-                        });
-                    } else
-                        Toast.makeText(getContext(), R.string.error_sqlite_format, Toast.LENGTH_SHORT).show();
-
-                    is.close();
-                } catch (Exception e) {
-                    Toast.makeText(getContext(), "Error " + e.getClass() + getString(R.string.error_file_check), Toast.LENGTH_SHORT).show();
+                    cursor.close();
                 }
+
+                if (name != null &&
+                        (name.endsWith(".db") ||
+                                name.endsWith(".sqlite") ||
+                                name.endsWith(".sqlite3") ||
+                                name.endsWith(".db3"))) {
+
+                    try {
+                        InputStream is = getContext().getContentResolver().openInputStream(uri);
+
+                        byte[] header = new byte[16];
+
+                        is.read(header);
+
+                        String headerText = new String(header);
+
+                        if (headerText.startsWith("SQLite format 3")) {
+
+                            String fileUri = uri.toString();
+
+                            fileText.setText(fileUri);
+                            fileText.post(() -> {
+                                fileText.setSelection(fileText.getText().length());
+                            });
+                        } else
+                            Toast.makeText(getContext(), R.string.error_sqlite_format, Toast.LENGTH_SHORT).show();
+
+                        is.close();
+                    } catch (Exception e) {
+                        Toast.makeText(getContext(), "Error " + e.getClass() + getString(R.string.error_file_check), Toast.LENGTH_SHORT).show();
+                    }
+                } else
+                    Toast.makeText(getContext(), R.string.error_sqlite_novalid, Toast.LENGTH_SHORT).show();
             } else
-                Toast.makeText(getContext(), R.string.error_sqlite_novalid, Toast.LENGTH_SHORT).show();
-        } else
-            Toast.makeText(getContext(), R.string.text_nodb, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.text_nodb, Toast.LENGTH_SHORT).show();
+        } catch (NullPointerException e) {
+            Toast.makeText(getContext(), getString(R.string.error_run) + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        searchingFile = false;
     }
 
     @Override
     public void onPause(){
         super.onPause();
         // Compare current settings with last saved to check for changes
-        if (fileManager.readFromFile("dbsettings.cfg")!=null || fileManager.readFromFile("aisettings.cfg")!=null) {
-            if (!fileManager.readFromFile("dbsettings.cfg").isEmpty() || !fileManager.readFromFile("aisettings.cfg").isEmpty()) {
-                if (!buildDbSettings().toString().equals(fileManager.readFromFile("dbsettings.cfg")) ||
-                        !buildAiSettings().toString().equals(fileManager.readFromFile("aisettings.cfg"))) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle(R.string.text_unsaved)
-                            .setMessage(R.string.warning_unsaved)
-                            .setPositiveButton(R.string.text_save, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    saveButton.performClick();
-                                }
-                            })
-                            .setNegativeButton(R.string.text_discard, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
+        if (!searchingFile) {
+            if (fileManager.readFromFile("dbsettings.cfg") != null || fileManager.readFromFile("aisettings.cfg") != null) {
+                if (!fileManager.readFromFile("dbsettings.cfg").isEmpty() || !fileManager.readFromFile("aisettings.cfg").isEmpty()) {
+                    if (!buildDbSettings().toString().equals(fileManager.readFromFile("dbsettings.cfg")) ||
+                            !buildAiSettings().toString().equals(fileManager.readFromFile("aisettings.cfg"))) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle(R.string.text_unsaved)
+                                .setMessage(R.string.warning_unsaved)
+                                .setPositiveButton(R.string.text_save, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        saveButton.performClick();
+                                    }
+                                })
+                                .setNegativeButton(R.string.text_discard, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
 
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
                 }
             }
         }

@@ -60,90 +60,96 @@ public class RunFragment extends Fragment {
         fileManager = new FileManager(getContext());
         mapManager = new MapManager();
         queryLayout.setVisibility(showQuery);
-        File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
-        File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
-        if (db.exists()) {
-            String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
+        try {
+            File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
+            File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
+            if (db.exists()) {
+                String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
 
-            if (Boolean.parseBoolean(dbConfig[0])) {
-                Object path = null;
-                if (!dbConfig[1].isEmpty()) {
-                    Uri uri = Uri.parse(dbConfig[1]);
-                    File dbFile = null;
-                    try {
-                        InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
-                        // Select current SQLite database and save it in cache
-                        dbFile = new File(getContext().getCacheDir(), "current.db");
+                if (Boolean.parseBoolean(dbConfig[0])) {
+                    Object path = null;
+                    if (!dbConfig[1].isEmpty()) {
+                        Uri uri = Uri.parse(dbConfig[1]);
+                        File dbFile = null;
+                        try {
+                            InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
+                            // Select current SQLite database and save it in cache
+                            dbFile = new File(getContext().getCacheDir(), "current.db");
 
-                        FileOutputStream outputStream = new FileOutputStream(dbFile);
+                            FileOutputStream outputStream = new FileOutputStream(dbFile);
 
-                        byte[] buffer = new byte[8192];
-                        int length;
+                            byte[] buffer = new byte[8192];
+                            int length;
 
-                        while ((length = inputStream.read(buffer)) > 0) {
-                            outputStream.write(buffer, 0, length);
-                        }
-
-                        outputStream.flush();
-                        outputStream.close();
-                        inputStream.close();
-
-                        path = dbFile.getAbsolutePath();
-
-                        // Get database file name
-                        String name = "";
-                        if (uri.getScheme().equals("content")) {
-                            Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
-                            try {
-                                if (cursor != null && cursor.moveToFirst()) {
-                                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                                    if (index != -1)
-                                        name = cursor.getString(index);
-                                }
-                            } finally {
-                                if (cursor != null)
-                                    cursor.close();
+                            while ((length = inputStream.read(buffer)) > 0) {
+                                outputStream.write(buffer, 0, length);
                             }
+
+                            outputStream.flush();
+                            outputStream.close();
+                            inputStream.close();
+
+                            path = dbFile.getAbsolutePath();
+
+                            // Get database file name
+                            String name = "";
+                            if (uri.getScheme().equals("content")) {
+                                Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+                                try {
+                                    if (cursor != null && cursor.moveToFirst()) {
+                                        int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                                        if (index != -1)
+                                            name = cursor.getString(index);
+                                    }
+                                } finally {
+                                    if (cursor != null)
+                                        cursor.close();
+                                }
+                            }
+
+                            if (name == null)
+                                name = uri.getLastPathSegment();
+
+                            databaseName = (name.contains(".")) ? name.split("\\.")[0] : name;
+                        } catch (FileNotFoundException e) {
+                            Toast.makeText(getContext(), R.string.error_load_sqlite, Toast.LENGTH_SHORT).show();
+                            path = "";
+                        } catch (IOException e) {
+                            Toast.makeText(getContext(), R.string.error_load_io, Toast.LENGTH_SHORT).show();
+                            path = "";
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), getString(R.string.error_run) + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            path = "";
                         }
-
-                        if (name == null)
-                            name = uri.getLastPathSegment();
-
-                        databaseName = (name.contains(".")) ? name.split("\\.")[0] : name;
-                    } catch (FileNotFoundException e) {
-                        Toast.makeText(getContext(), R.string.error_load_sqlite, Toast.LENGTH_SHORT).show();
+                    } else
                         path = "";
-                    } catch (IOException e) {
-                        Toast.makeText(getContext(), R.string.error_load_io, Toast.LENGTH_SHORT).show();
-                        path = "";
-                    }
+
+                    file = path.toString();
+                    apiIp = "";
+                    apiPort = "";
+                } else {
+                    apiIp = dbConfig[2];
+                    apiPort = dbConfig[3];
+                    file = "";
                 }
-                else
-                    path = "";
-
-                file = path.toString();
-                apiIp = "";
-                apiPort = "";
-            } else {
-                apiIp = dbConfig[2];
-                apiPort = dbConfig[3];
-                file = "";
             }
-        }
-        if (ai.exists()) {
-            String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
+            if (ai.exists()) {
+                String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
 
-            if (Boolean.parseBoolean(aiConfig[0])) {
-                geminiKey = aiConfig[1];
-                llmIp = "";
-                llmPort = "";
-                llmModel = "";
-            } else {
-                llmIp = aiConfig[2];
-                llmPort = aiConfig[3];
-                llmModel = aiConfig[4];
-                geminiKey = "";
+                if (Boolean.parseBoolean(aiConfig[0])) {
+                    geminiKey = aiConfig[1];
+                    llmIp = "";
+                    llmPort = "";
+                    llmModel = "";
+                } else {
+                    llmIp = aiConfig[2];
+                    llmPort = aiConfig[3];
+                    llmModel = aiConfig[4];
+                    geminiKey = "";
+                }
             }
+        } catch (NullPointerException e) {
+            Toast.makeText(getContext(), R.string.error_data, Toast.LENGTH_SHORT).show();
         }
 
         JSONArray priorJson = runViewModel.getJson();
@@ -170,17 +176,21 @@ public class RunFragment extends Fragment {
                     if (!selectedMap.isEmpty())
                         databaseName = selectedMap;
 
-                    if (!databaseName.isEmpty()) {
-                        File mapsFolder = getContext().getFilesDir();
-                        if (mapsFolder.exists()) {
-                            if (mapsFolder.listFiles().length > 0) {
-                                for (File map : mapsFolder.listFiles()) {
-                                    if (map.getName().contains(databaseName) && map.getName().contains(".map")) {
-                                        json = fileManager.readFromFile(map.getName());
+                    try {
+                        if (!databaseName.isEmpty()) {
+                            File mapsFolder = getContext().getFilesDir();
+                            if (mapsFolder.exists()) {
+                                if (mapsFolder.listFiles().length > 0) {
+                                    for (File map : mapsFolder.listFiles()) {
+                                        if (map.getName().contains(databaseName) && map.getName().contains(".map")) {
+                                            json = fileManager.readFromFile(map.getName());
+                                        }
                                     }
                                 }
                             }
                         }
+                    } catch (NullPointerException e) {
+                        json = "";
                     }
 
                     // Else, it maps it
@@ -317,7 +327,7 @@ public class RunFragment extends Fragment {
                 } catch (Exception e) {
                     Toast.makeText(getContext(), R.string.error_ai_ask, Toast.LENGTH_LONG).show();
                 }
-            } else { // Generate the result in a PostgreSQL server using the LangToSQL REST API, overring its settings
+            } else if (!apiIp.isEmpty()) { // Generate the result in a PostgreSQL server using the LangToSQL REST API, overring its settings
                 RestApiCall api = new RestApiClient("http://" + apiIp + ":" + apiPort.trim() + "/").getClient().create(RestApiCall.class);
 
                 retrofit2.Call<ResponseBody> call = api.generateSQL(requestText.getText().toString());
@@ -350,7 +360,8 @@ public class RunFragment extends Fragment {
                         Toast.makeText(getContext(), R.string.error_api_available, Toast.LENGTH_LONG).show();
                     }
                 });
-            }
+            } else
+                Toast.makeText(getContext(), R.string.error_ai_save, Toast.LENGTH_SHORT).show();
         });
         runButton.setOnClickListener(v -> {
             Cursor cursor = null;
@@ -376,8 +387,10 @@ public class RunFragment extends Fragment {
                     Toast.makeText(getContext(), getString(R.string.error_run) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
             }
-            else
+            else if (!apiIp.isEmpty())
                 Toast.makeText(getContext(), R.string.warning_direct_run, Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(getContext(), R.string.error_db_save, Toast.LENGTH_SHORT).show();
         });
 
         return root;
@@ -457,33 +470,36 @@ public class RunFragment extends Fragment {
     }
 
     public MatrixCursor jsonToCursor(JSONArray array) throws Exception {
+        try {
+            if (array.length() == 0) return null;
 
-        if (array.length() == 0) return null;
+            JSONObject first = array.getJSONObject(0);
+            JSONArray keys = first.names();
 
-        JSONObject first = array.getJSONObject(0);
-        JSONArray keys = first.names();
-
-        String[] columns = new String[keys.length()];
-        for (int i = 0; i < keys.length(); i++) {
-            columns[i] = keys.getString(i);
-        }
-
-        MatrixCursor cursor = new MatrixCursor(columns);
-
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject obj = array.getJSONObject(i);
-
-            Object[] row = new Object[columns.length];
-
-            for (int j = 0; j < columns.length; j++) {
-                String key = columns[j];
-                row[j] = obj.opt(key); // safe get
+            String[] columns = new String[keys.length()];
+            for (int i = 0; i < keys.length(); i++) {
+                columns[i] = keys.getString(i);
             }
 
-            cursor.addRow(row);
-        }
+            MatrixCursor cursor = new MatrixCursor(columns);
 
-        return cursor;
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+
+                Object[] row = new Object[columns.length];
+
+                for (int j = 0; j < columns.length; j++) {
+                    String key = columns[j];
+                    row[j] = obj.opt(key); // safe get
+                }
+
+                cursor.addRow(row);
+            }
+
+            return cursor;
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     public static JSONArray cursorToJson(Cursor cursor) {
