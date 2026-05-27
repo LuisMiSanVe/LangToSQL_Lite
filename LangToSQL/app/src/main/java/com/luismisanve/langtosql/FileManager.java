@@ -59,41 +59,38 @@ public class FileManager {
     }
 
     public void writeToFile(String fileName, String data) {
-        File file = new File(context.getFilesDir(), fileName);
+        try {
 
-        if (file.exists()) {
-            try {
+            SecretKey secretKey = getSecretKey();
 
-                SecretKey secretKey = getSecretKey();
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-                Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-                cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] iv = cipher.getIV();
 
-                byte[] iv = cipher.getIV();
+            byte[] encryptedData = cipher.doFinal(
+                    data.getBytes(StandardCharsets.UTF_8)
+            );
 
-                byte[] encryptedData = cipher.doFinal(
-                        data.getBytes(StandardCharsets.UTF_8)
-                );
+            try (FileOutputStream fos =
+                         context.openFileOutput(fileName, Context.MODE_PRIVATE)) {
 
-                try (FileOutputStream fos =
-                             context.openFileOutput(fileName, Context.MODE_PRIVATE)) {
+                // Save IV length
+                fos.write(iv.length);
 
-                    // Save IV length
-                    fos.write(iv.length);
+                // Save IV
+                fos.write(iv);
 
-                    // Save IV
-                    fos.write(iv);
+                // Save encrypted content
+                fos.write(encryptedData);
 
-                    // Save encrypted content
-                    fos.write(encryptedData);
-
-                    fos.flush();
-                }
-
-            } catch (Exception e) {
-                Toast.makeText(context, context.getString(R.string.error_file_internal) + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                fos.flush();
             }
+
+        } catch (Exception e) {
+            Toast.makeText(context, context.getString(R.string.error_file_internal) + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
         }
+
     }
 
     public String readFromFile(String fileName) {

@@ -1,6 +1,7 @@
 package com.luismisanve.langtosql.ui.run;
 
 import android.content.*;
+import android.content.res.Configuration;
 import android.database.*;
 import android.database.sqlite.*;
 import android.net.Uri;
@@ -12,8 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import com.bumptech.glide.Glide;
 import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentRunBinding;
+import com.luismisanve.langtosql.ui.config.ConfigViewModel;
 import static android.view.View.*;
 import org.json.*;
 import java.io.*;
@@ -23,11 +26,11 @@ public class RunFragment extends Fragment {
     // Variables
     private FragmentRunBinding binding;
     private EditText requestText;
-    private ImageButton sendButton;
     private LinearLayout queryLayout;
     private ImageButton runButton;
     private EditText queryText;
     private TableLayout tableLayout;
+    private ImageView imageBack;
     private FileManager fileManager;
     private MapManager mapManager;
     private String file = "";
@@ -45,107 +48,114 @@ public class RunFragment extends Fragment {
     // Initializer
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         RunViewModel runViewModel = new ViewModelProvider(this).get(RunViewModel.class);
+        ConfigViewModel configViewModel = new ViewModelProvider(requireActivity()).get(ConfigViewModel.class);
         binding = FragmentRunBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         // Layout Objects
         requestText = root.findViewById(R.id.requestText);
-        sendButton = root.findViewById(R.id.sendButton);
+        ImageButton sendButton = root.findViewById(R.id.sendButton);
         queryLayout = root.findViewById(R.id.queryLayout);
         queryText = root.findViewById(R.id.queryText);
         runButton = root.findViewById(R.id.runButton);
         tableLayout = root.findViewById(R.id.tableLayout);
+        imageBack = root.findViewById(R.id.imageBack);
 
         // Load config
         fileManager = new FileManager(getContext());
         mapManager = new MapManager();
         queryLayout.setVisibility(showQuery);
         try {
-            File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
-            File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
-            if (db.exists()) {
-                String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
+            if (getContext()!= null) {
+                File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
+                File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
+                if (db.exists()) {
+                    String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
 
-                if (Boolean.parseBoolean(dbConfig[0])) {
-                    Object path = null;
-                    if (!dbConfig[1].isEmpty()) {
-                        Uri uri = Uri.parse(dbConfig[1]);
-                        File dbFile = null;
-                        try {
-                            InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
-                            // Select current SQLite database and save it in cache
-                            dbFile = new File(getContext().getCacheDir(), "current.db");
+                    if (Boolean.parseBoolean(dbConfig[0])) {
+                        Object path = null;
+                        if (!dbConfig[1].isEmpty()) {
+                            Uri uri = Uri.parse(dbConfig[1]);
+                            File dbFile = null;
+                            try {
+                                InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
+                                // Select current SQLite database and save it in cache
+                                dbFile = new File(getContext().getCacheDir(), "current.db");
 
-                            FileOutputStream outputStream = new FileOutputStream(dbFile);
+                                FileOutputStream outputStream = new FileOutputStream(dbFile);
 
-                            byte[] buffer = new byte[8192];
-                            int length;
+                                byte[] buffer = new byte[8192];
+                                int length;
 
-                            while ((length = inputStream.read(buffer)) > 0) {
-                                outputStream.write(buffer, 0, length);
-                            }
-
-                            outputStream.flush();
-                            outputStream.close();
-                            inputStream.close();
-
-                            path = dbFile.getAbsolutePath();
-
-                            // Get database file name
-                            String name = "";
-                            if (uri.getScheme().equals("content")) {
-                                Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
-                                try {
-                                    if (cursor != null && cursor.moveToFirst()) {
-                                        int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                                        if (index != -1)
-                                            name = cursor.getString(index);
+                                if (inputStream != null) {
+                                    while ((length = inputStream.read(buffer)) > 0) {
+                                        outputStream.write(buffer, 0, length);
                                     }
-                                } finally {
-                                    if (cursor != null)
-                                        cursor.close();
+
+                                    inputStream.close();
                                 }
+                                outputStream.flush();
+                                outputStream.close();
+
+                                path = dbFile.getAbsolutePath();
+
+                                // Get database file name
+                                String name = "";
+                                if (uri.getScheme() != null && uri.getScheme().equals("content")) {
+                                    Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+                                    try {
+                                        if (cursor != null && cursor.moveToFirst()) {
+                                            int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                                            if (index != -1)
+                                                name = cursor.getString(index);
+                                        }
+                                    } finally {
+                                        if (cursor != null)
+                                            cursor.close();
+                                    }
+                                }
+
+                                if (name == null)
+                                    name = uri.getLastPathSegment();
+
+                                if (name != null)
+                                    databaseName = (name.contains(".")) ? name.split("\\.")[0] : name;
+                            } catch (FileNotFoundException e) {
+                                Toast.makeText(getContext(), R.string.error_load_sqlite, Toast.LENGTH_SHORT).show();
+                                path = "";
+                            } catch (IOException e) {
+                                Toast.makeText(getContext(), R.string.error_load_io, Toast.LENGTH_SHORT).show();
+                                path = "";
+                            } catch (Exception e) {
+                                Toast.makeText(getContext(), getString(R.string.error_run) + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                path = "";
                             }
-
-                            if (name == null)
-                                name = uri.getLastPathSegment();
-
-                            databaseName = (name.contains(".")) ? name.split("\\.")[0] : name;
-                        } catch (FileNotFoundException e) {
-                            Toast.makeText(getContext(), R.string.error_load_sqlite, Toast.LENGTH_SHORT).show();
+                        } else
                             path = "";
-                        } catch (IOException e) {
-                            Toast.makeText(getContext(), R.string.error_load_io, Toast.LENGTH_SHORT).show();
-                            path = "";
-                        } catch (Exception e) {
-                            Toast.makeText(getContext(), getString(R.string.error_run) + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                            path = "";
-                        }
-                    } else
-                        path = "";
 
-                    file = path.toString();
-                    apiIp = "";
-                    apiPort = "";
-                } else {
-                    apiIp = dbConfig[2];
-                    apiPort = dbConfig[3];
-                    file = "";
+                        file = path.toString();
+                        apiIp = "";
+                        apiPort = "";
+                    } else {
+                        apiIp = dbConfig[2];
+                        apiPort = dbConfig[3];
+                        file = "";
+                    }
                 }
-            }
-            if (ai.exists()) {
-                String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
+                if (ai.exists()) {
+                    String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
 
-                if (Boolean.parseBoolean(aiConfig[0])) {
-                    geminiKey = aiConfig[1];
-                    llmIp = "";
-                    llmPort = "";
-                    llmModel = "";
-                } else {
-                    llmIp = aiConfig[2];
-                    llmPort = aiConfig[3];
-                    llmModel = aiConfig[4];
-                    geminiKey = "";
+                    if (Boolean.parseBoolean(aiConfig[0])) {
+                        geminiKey = aiConfig[1];
+                        llmIp = "";
+                        llmPort = "";
+                        llmModel = "";
+                    } else {
+                        llmIp = aiConfig[2];
+                        llmPort = aiConfig[3];
+                        llmModel = aiConfig[4];
+                        geminiKey = "";
+                    }
                 }
             }
         } catch (NullPointerException e) {
@@ -163,12 +173,14 @@ public class RunFragment extends Fragment {
         }
 
         String priorMap = runViewModel.getMap();
-        if (priorMap != null)
+        if (!json.isEmpty() && priorMap != null)
             json = priorMap;
 
         // Events
         sendButton.setOnClickListener(v -> {
             Toast.makeText(getContext(), R.string.text_generate, Toast.LENGTH_SHORT).show();
+            toggleLoadingScreen();
+
             if (!file.isEmpty()) { // Generate the query using the AI selected
                 // Map the database
                 if (json.isEmpty()) {
@@ -194,13 +206,13 @@ public class RunFragment extends Fragment {
                     }
 
                     // Else, it maps it
-                    if (json.isEmpty())
+                    if (json.isEmpty() && getContext() != null)
                         json = mapManager.mapDatabase(getContext());
 
                     runViewModel.setMap(json); // Save the map in memory
                 }
 
-                String context = "You're a database assistant, I'll send you requests and you'll return a PostgeSQL query to do my request and if what I request can't be found on the database, tell me, but don't use more words. " +
+                String context = "You're a database assistant, I'll send you requests and you'll return a SQLite query to do my request and if what I request can't be found on the database, tell me, but don't use more words. " +
                                 "This is the database: " +
                                 json +
                                 "\nAnd this is my request: ";
@@ -301,67 +313,101 @@ public class RunFragment extends Fragment {
 
                                     String finalSql = generatedSql;
 
-                                    getActivity().runOnUiThread(() -> {
-                                        queryText.setText(finalSql);
-                                        runButton.performClick();
-                                    });
+                                    if (getActivity() != null)
+                                        getActivity().runOnUiThread(() -> {
+                                            queryText.setText(finalSql);
+                                            runButton.performClick();
+                                            toggleLoadingScreen();
+                                        });
                                 } catch (JSONException e) {
-                                    getActivity().runOnUiThread(() -> {
-                                        Toast.makeText(getContext(), R.string.error_ai_format, Toast.LENGTH_LONG).show();
-                                    });
+                                    if (getActivity() != null)
+                                        getActivity().runOnUiThread(() -> {
+                                            Toast.makeText(getContext(), R.string.error_ai_format, Toast.LENGTH_LONG).show();
+                                            toggleLoadingScreen();
+                                        });
                                 }
                             } else {
-                                getActivity().runOnUiThread(() -> {
-                                    Toast.makeText(getContext(), R.string.error_ai_available, Toast.LENGTH_LONG).show();
-                                });
+                                if (getActivity() != null)
+                                    getActivity().runOnUiThread(() -> {
+                                        Toast.makeText(getContext(), R.string.error_ai_available, Toast.LENGTH_LONG).show();
+                                        toggleLoadingScreen();
+                                    });
                             }
                         }
 
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            getActivity().runOnUiThread(() -> {
-                                Toast.makeText(getContext(), R.string.error_ai_ask, Toast.LENGTH_LONG).show();
-                            });
+                            if (getActivity() != null)
+                                getActivity().runOnUiThread(() -> {
+                                    Toast.makeText(getContext(), R.string.error_ai_ask, Toast.LENGTH_LONG).show();
+                                    toggleLoadingScreen();
+                                });
                         }
                     });
                 } catch (Exception e) {
                     Toast.makeText(getContext(), R.string.error_ai_ask, Toast.LENGTH_LONG).show();
+                    toggleLoadingScreen();
                 }
-            } else if (!apiIp.isEmpty()) { // Generate the result in a PostgreSQL server using the LangToSQL REST API, overring its settings
-                RestApiCall api = new RestApiClient("http://" + apiIp + ":" + apiPort.trim() + "/").getClient().create(RestApiCall.class);
+            } else if (!apiIp.isEmpty()) { // Generate the result in a PostgreSQL server using the LangToSQL REST API
+                try {
+                    RestApiCall api = new RestApiClient("http://" + apiIp + ":" + apiPort.trim() + "/").getClient().create(RestApiCall.class);
 
-                retrofit2.Call<ResponseBody> call = api.generateSQL(requestText.getText().toString());
+                    retrofit2.Call<ResponseBody> call = api.generateSQL(requestText.getText().toString());
 
-                call.enqueue(new retrofit2.Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(retrofit2.Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-                        if (response.isSuccessful()) {
-                            try {
-                                String raw = response.body().string();
-                                String[] parts = raw.split("Generated query:");
-                                String json = parts[0];
-                                queryText.setText(parts[1].trim());
-                                JSONArray arr = new JSONArray(json);
+                    call.enqueue(new retrofit2.Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                            if (response.isSuccessful()) {
+                                try {
+                                    String raw = response.body().string();
+                                    String[] parts = raw.split("Generated query:");
+                                    String json = parts[0];
+                                    queryText.setText(parts[1].trim());
+                                    JSONArray arr = new JSONArray(json);
 
-                                runViewModel.setJson(arr); // Save the result in memory
+                                    runViewModel.setJson(arr); // Save the result in memory
 
-                                MatrixCursor cursor = jsonToCursor(arr);
+                                    MatrixCursor cursor = jsonToCursor(arr);
 
-                                buildTable(cursor);
-                            } catch (Exception e) {
-                                Toast.makeText(getContext(), R.string.error_api_format, Toast.LENGTH_LONG).show();
+                                    buildTable(cursor);
+
+                                    if (getActivity() != null)
+                                        getActivity().runOnUiThread(() -> {
+                                            toggleLoadingScreen();
+                                        });
+                                } catch (Exception e) {
+                                    if (getActivity() != null)
+                                        getActivity().runOnUiThread(() -> {
+                                            Toast.makeText(getContext(), R.string.error_api_format, Toast.LENGTH_LONG).show();
+                                            toggleLoadingScreen();
+                                        });
+                                }
+                            } else {
+                                if (getActivity() != null)
+                                    getActivity().runOnUiThread(() -> {
+                                        Toast.makeText(getContext(), getString(R.string.error_api_code) + " " + response.code(), Toast.LENGTH_LONG).show();
+                                        toggleLoadingScreen();
+                                    });
                             }
-                        } else
-                            Toast.makeText(getContext(), getString(R.string.error_api_code) + " " + response.code(), Toast.LENGTH_LONG).show();
-                    }
+                        }
 
-                    @Override
-                    public void onFailure(retrofit2.Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(getContext(), R.string.error_api_available, Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else
+                        @Override
+                        public void onFailure(retrofit2.Call<ResponseBody> call, Throwable t) {
+                            if (getActivity() != null)
+                                getActivity().runOnUiThread(() -> {
+                                    Toast.makeText(getContext(), R.string.error_api_available, Toast.LENGTH_LONG).show();
+                                    toggleLoadingScreen();
+                                });
+                        }
+                    });
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), R.string.error_ai_ask, Toast.LENGTH_LONG).show();
+                    toggleLoadingScreen();
+                }
+            } else {
                 Toast.makeText(getContext(), R.string.error_ai_save, Toast.LENGTH_SHORT).show();
+                toggleLoadingScreen();
+            }
         });
         runButton.setOnClickListener(v -> {
             Cursor cursor = null;
@@ -381,8 +427,7 @@ public class RunFragment extends Fragment {
                     sqliteDb.close();
                 } catch (SQLiteException e) {
                     Toast.makeText(getContext(), getString(R.string.error_run_query) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                    queryText.setEnabled(true);
-                    runButton.setEnabled(true);
+                    queryLayout.setVisibility(VISIBLE);
                 } catch (Exception e) {
                     Toast.makeText(getContext(), getString(R.string.error_run) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -392,6 +437,12 @@ public class RunFragment extends Fragment {
             else
                 Toast.makeText(getContext(), R.string.error_db_save, Toast.LENGTH_SHORT).show();
         });
+        configViewModel.getSavedOutside().observe(getViewLifecycleOwner(), saved ->{
+            if (saved) {
+                configViewModel.setSavedOutside(false);
+                getActivity().recreate();
+            }
+        });
 
         return root;
     }
@@ -400,7 +451,10 @@ public class RunFragment extends Fragment {
     private void buildTable(Cursor cursor) {
         tableLayout.removeAllViews();
 
-        if (cursor == null) return;
+        if (cursor == null) {
+            Toast.makeText(getContext(), R.string.warning_no_data, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         String[] columns = cursor.getColumnNames();
 
@@ -552,6 +606,43 @@ public class RunFragment extends Fragment {
         } while (cursor.moveToNext());
 
         return result;
+    }
+
+    public void toggleLoadingScreen(){
+        int paramSizeHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
+        int paramSizeWidth = ViewGroup.LayoutParams.WRAP_CONTENT;
+        int layoutGravity = Gravity.BOTTOM;
+        int transZ = -1;
+        ImageView.ScaleType scaleType = ImageView.ScaleType.FIT_XY;
+
+        if (imageBack.getTranslationZ()<0) {
+            Glide.with(this)
+                    .asGif()
+                    .load(R.drawable.load)
+                    .into(imageBack);
+            paramSizeHeight = ViewGroup.LayoutParams.MATCH_PARENT;
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+                paramSizeWidth = ViewGroup.LayoutParams.MATCH_PARENT;
+            layoutGravity = Gravity.CENTER;
+            transZ = 1;
+            scaleType = ImageView.ScaleType.CENTER_CROP;
+        }
+        else {
+            Glide.with(this).clear(imageBack);
+            imageBack.setImageResource(R.drawable.fade);
+        }
+
+        ViewGroup.LayoutParams params = imageBack.getLayoutParams();
+        params.height = paramSizeHeight;
+        params.width = paramSizeWidth;
+        if (params instanceof LinearLayout.LayoutParams) {
+            LinearLayout.LayoutParams layout = (LinearLayout.LayoutParams) params;
+            layout.gravity = layoutGravity;
+            imageBack.setLayoutParams(layout);
+        }
+        imageBack.setLayoutParams(params);
+        imageBack.setTranslationZ(transZ);
+        imageBack.setScaleType(scaleType);
     }
 
     // Destroyer

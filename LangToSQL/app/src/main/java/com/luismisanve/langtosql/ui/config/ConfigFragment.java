@@ -16,6 +16,7 @@ import androidx.activity.result.*;
 import androidx.activity.result.contract.*;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentConfigBinding;
 import com.luismisanve.langtosql.ui.run.RunFragment;
@@ -43,6 +44,7 @@ public class ConfigFragment extends Fragment {
     private FileManager fileManager;
     private String oldData;
     private boolean searchingFile = false;
+    private ConfigViewModel configViewModel;
     private final String ipFormat = "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$";
     private final String portFormat = "^(6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]?\\d{1,4})$";
     private final ActivityResultLauncher<Intent> filePickerLauncher =
@@ -52,6 +54,7 @@ public class ConfigFragment extends Fragment {
 
     // Initializer
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
+        configViewModel = new ViewModelProvider(requireActivity()).get(ConfigViewModel.class);
         binding = FragmentConfigBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -102,6 +105,11 @@ public class ConfigFragment extends Fragment {
                         apiIpText.setText(dbConfig[2]);
                     if (dbConfig.length > 3)
                         apiPortText.setText(dbConfig[3]);
+                } else {
+                    if (!useSQLite.isChecked() && !useApi.isChecked()) {
+                        useSQLite.performClick();
+                        useSQLite.setChecked(true);
+                    }
                 }
                 if (ai.exists()) {
                     String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
@@ -120,6 +128,11 @@ public class ConfigFragment extends Fragment {
                         llmPortText.setText(aiConfig[3]);
                     if (aiConfig.length > 4)
                         llmModelText.setText(aiConfig[4]);
+                } else {
+                    if (!useGemini.isChecked() && !useLLM.isChecked()) {
+                        useGemini.performClick();
+                        useGemini.setChecked(true);
+                    }
                 }
             } catch (NullPointerException e) {
                 Toast.makeText(getContext(), R.string.error_data, Toast.LENGTH_SHORT).show();
@@ -141,6 +154,8 @@ public class ConfigFragment extends Fragment {
             llmIpText.setEnabled(true);
             llmPortText.setEnabled(true);
             llmModelText.setEnabled(true);
+
+            fileText.requestFocus();
         });
         useApi.setOnClickListener(v -> {
             fileText.setEnabled(false);
@@ -157,6 +172,7 @@ public class ConfigFragment extends Fragment {
             llmPortText.setEnabled(false);
             llmModelText.setEnabled(false);
 
+            apiIpText.requestFocus();
             Toast.makeText(getContext(), R.string.warning_api_override, Toast.LENGTH_LONG).show();
         });
         useGemini.setOnClickListener(v -> {
@@ -165,6 +181,8 @@ public class ConfigFragment extends Fragment {
             llmIpText.setEnabled(false);
             llmPortText.setEnabled(false);
             llmModelText.setEnabled(false);
+
+            geminiKeyText.requestFocus();
         });
         showCheck.setOnCheckedChangeListener((v, checked) -> {
             if (checked)
@@ -178,6 +196,8 @@ public class ConfigFragment extends Fragment {
             llmIpText.setEnabled(true);
             llmPortText.setEnabled(true);
             llmModelText.setEnabled(true);
+
+            llmIpText.requestFocus();
         });
         fileButton.setOnClickListener(v -> {
             searchingFile = true;
@@ -204,6 +224,9 @@ public class ConfigFragment extends Fragment {
 
                 fileManager.writeToFile("dbsettings.cfg", dbSettingsFormat.toString());
                 fileManager.writeToFile("aisettings.cfg", aiSettingsFormat.toString());
+
+                RunFragment.json = "";
+                RunFragment.selectedMap = "";
 
                 if (getContext() != null)
                     Toast.makeText(getContext(), R.string.text_saved, Toast.LENGTH_SHORT).show();
@@ -349,12 +372,15 @@ public class ConfigFragment extends Fragment {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         saveButton.performClick();
+                                        configViewModel.setSavedOutside(true);
                                     }
                                 })
                                 .setNegativeButton(R.string.text_discard, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
+                                        if (getActivity() != null)
+                                            getActivity().recreate();
                                     }
                                 });
 

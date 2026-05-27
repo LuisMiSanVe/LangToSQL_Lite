@@ -30,8 +30,7 @@
                 android:id="@+id/useSQLite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/radio_SQLite"
-                android:checked="true"/>
+                android:text="@string/radio_SQLite"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -120,8 +119,7 @@
                 android:id="@+id/useGemini"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/radio_Gemini"
-                android:checked="true"/>
+                android:text="@string/radio_Gemini"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

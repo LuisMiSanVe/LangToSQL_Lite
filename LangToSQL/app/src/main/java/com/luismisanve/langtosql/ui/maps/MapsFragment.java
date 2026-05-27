@@ -9,19 +9,18 @@ import android.provider.*;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import com.luismisanve.langtosql.*;
 import com.luismisanve.langtosql.databinding.FragmentMapsBinding;
+import com.luismisanve.langtosql.ui.config.ConfigViewModel;
 import com.luismisanve.langtosql.ui.run.RunFragment;
 import java.io.*;
 
 public class MapsFragment extends Fragment {
     // Variables
     private FragmentMapsBinding binding;
-    private TextView currentDbMapText;
-    private ImageButton mapButton;
     private LinearLayout mapsLayout;
     private FileManager fileManager;
     private MapManager mapManager;
@@ -29,12 +28,13 @@ public class MapsFragment extends Fragment {
 
     // Initializer
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ConfigViewModel configViewModel = new ViewModelProvider(requireActivity()).get(ConfigViewModel.class);
         binding = FragmentMapsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         // Layout Objects
-        currentDbMapText = root.findViewById(R.id.currentDbMapText);
-        mapButton = root.findViewById(R.id.mapButton);
+        TextView currentDbMapText = root.findViewById(R.id.currentDbMapText);
+        ImageButton mapButton = root.findViewById(R.id.mapButton);
         mapsLayout = root.findViewById(R.id.mapsLayout);
 
         // Load config
@@ -102,6 +102,12 @@ public class MapsFragment extends Fragment {
                 }
             } else
                 Toast.makeText(getContext(), R.string.text_nodb, Toast.LENGTH_SHORT).show();
+        });
+        configViewModel.getSavedOutside().observe(getViewLifecycleOwner(), saved ->{
+            if (saved) {
+                configViewModel.setSavedOutside(false);
+                getActivity().recreate();
+            }
         });
 
         return root;

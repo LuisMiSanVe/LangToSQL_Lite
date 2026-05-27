@@ -22,7 +22,7 @@
     <string name="check_show">Mostrar campos de ejecución avanzada</string>
     <string name="title_currentdb">Base de datos actual</string>
     <!--Run-->
-    <string name="text_result">Manda una solicitud para obtener una tabla con resultados</string>
+    <string name="text_result">Manda una solicitud para obtener una tabla con resultados.</string>
     <string name="error_load_sqlite">La base de datos SQLite configurada no existe.</string>
     <string name="error_load_io">No se pudo acceder a la base de datos SQLite configurada.</string>
     <string name="error_load_prior">El resultado anterior no se pudo cargar.</string>
@@ -41,6 +41,7 @@
     <string name="error_data">No se pudo devolver ningún dato.</string>
     <string name="error_ai_save">No se ha guardado ninguna configuración de IA.</string>
     <string name="error_db_save">No se ha guardado ninguna configuración de base de datos.</string>
+    <string name="warning_no_data">La sentencia no devolvió resultados.</string>
     <!--Maps-->
     <string name="text_mapping">Mapeando base de datos…</string>
     <string name="text_mapped">La base de datos de ha mapeado.</string>
@@ -48,7 +49,7 @@
     <string name="text_map_deletion">Eliminar mapa</string>
     <string name="text_map_deletechoice">Eliminar</string>
     <string name="text_map_cancelchoice">Cancelar</string>
-    <string name="text_map_selected"> seleccionado para la siguiente solicitud</string>
+    <string name="text_map_selected"> seleccionado para la siguiente solicitud.</string>
     <string name="error_nosqlite">No se ha encontrado la base de datos SQLite.</string>
     <!--Config-->
     <string name="warning_api_override">Los ajustes serán sobrescritos por los de la API REST.</string>
@@ -61,9 +62,9 @@
     <string name="warning_unsaved">Tienes cambios sin guardar, ¿quieres guardar?\nEs posible que no se guarde si no has rellenado las secciones seleccionadas.</string>
     <string name="text_save">Guardar</string>
     <string name="text_discard">Descartar</string>
-    <string name="error_file_format">La ruta del archivo no tiene un formato válido de Android</string>
-    <string name="error_ip_format">La dirección IPv4 no tiene un formato válido</string>
-    <string name="error_port_format">El puerto no tiene un formato válido</string>
-    <string name="error_gemini_format">La clave de API de Gemini no tiene un formato válido</string>
+    <string name="error_file_format">La ruta del archivo no tiene un formato válido de Android.</string>
+    <string name="error_ip_format">La dirección IPv4 no tiene un formato válido.</string>
+    <string name="error_port_format">El puerto no tiene un formato válido.</string>
+    <string name="error_gemini_format">La clave de API de Gemini no tiene un formato válido.</string>
     <string name="error_file_internal">Un error interno de los ficheros ocurrió: </string>
 </resources>
