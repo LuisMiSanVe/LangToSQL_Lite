@@ -83,8 +83,7 @@
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/outline_box"
                     android:padding="10dp"
-                    android:hint="@string/hint_ip"
-                    android:enabled="false"/>
+                    android:hint="@string/hint_ip"/>
 
                 <EditText
                     android:id="@+id/apiPortText"
@@ -95,8 +94,7 @@
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/outline_box"
                     android:padding="10dp"
-                    android:hint="@string/hint_port"
-                    android:enabled="false"/>
+                    android:hint="@string/hint_port"/>
             </LinearLayout>
 
         </RadioGroup>
@@ -175,8 +173,7 @@
                         android:layout_marginEnd="8dp"
                         android:background="@drawable/outline_box"
                         android:padding="10dp"
-                        android:hint="@string/hint_ip"
-                        android:enabled="false"/>
+                        android:hint="@string/hint_ip"/>
 
                     <EditText
                         android:id="@+id/llmPortText"
@@ -187,8 +184,7 @@
                         android:layout_marginEnd="8dp"
                         android:background="@drawable/outline_box"
                         android:padding="10dp"
-                        android:hint="@string/hint_port"
-                        android:enabled="false"/>
+                        android:hint="@string/hint_port"/>
 
                 </LinearLayout>
 
@@ -201,8 +197,7 @@
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/outline_box"
                     android:padding="10dp"
-                    android:hint="@string/hint_model"
-                    android:enabled="false"/>
+                    android:hint="@string/hint_model"/>
 
             </LinearLayout>
 

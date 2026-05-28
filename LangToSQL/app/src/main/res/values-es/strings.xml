@@ -67,4 +67,5 @@
     <string name="error_port_format">El puerto no tiene un formato válido.</string>
     <string name="error_gemini_format">La clave de API de Gemini no tiene un formato válido.</string>
     <string name="error_file_internal">Un error interno de los ficheros ocurrió: </string>
+    <string name="error_format">Los campos con formato incorrecto se han vaciado.</string>
 </resources>

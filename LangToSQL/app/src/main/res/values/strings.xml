@@ -67,4 +67,5 @@
     <string name="error_port_format">The port doesn\'t have a valid format.</string>
     <string name="error_gemini_format">The Gemini API Key doesn\'t have a valid format.</string>
     <string name="error_file_internal">An internal file error occurred: </string>
+    <string name="error_format">Wrong formatted fields where emptied.</string>
 </resources>

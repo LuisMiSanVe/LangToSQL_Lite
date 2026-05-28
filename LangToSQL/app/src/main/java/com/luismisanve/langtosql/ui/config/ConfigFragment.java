@@ -45,8 +45,11 @@ public class ConfigFragment extends Fragment {
     private String oldData;
     private boolean searchingFile = false;
     private ConfigViewModel configViewModel;
+    private View root;
     private final String ipFormat = "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$";
     private final String portFormat = "^(6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]?\\d{1,4})$";
+    private final String fileFormat = "^content://.*";
+    private final String apiFormat = "^AIza[0-9A-Za-z_-]{35}$";
     private final ActivityResultLauncher<Intent> filePickerLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
@@ -56,7 +59,7 @@ public class ConfigFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         configViewModel = new ViewModelProvider(requireActivity()).get(ConfigViewModel.class);
         binding = FragmentConfigBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        root = binding.getRoot();
 
         // Layout objects
 
@@ -239,7 +242,7 @@ public class ConfigFragment extends Fragment {
                 RunFragment.showQuery = GONE;
         });
         fileText.setOnFocusChangeListener((v, focused) -> {
-            checkFormat(focused, fileText, R.string.error_file_format, "^content://.*");
+            checkFormat(focused, fileText, R.string.error_file_format, fileFormat);
         });
         apiIpText.setOnFocusChangeListener((v, focused) -> {
             checkFormat(focused, apiIpText, R.string.error_ip_format, ipFormat);
@@ -248,7 +251,7 @@ public class ConfigFragment extends Fragment {
             checkFormat(focused, apiPortText, R.string.error_port_format, portFormat);
         });
         geminiKeyText.setOnFocusChangeListener((v, focused) -> {
-            checkFormat(focused, geminiKeyText, R.string.error_gemini_format, "^AIza[0-9A-Za-z_-]{35}$");
+            checkFormat(focused, geminiKeyText, R.string.error_gemini_format, apiFormat);
         });
         llmIpText.setOnFocusChangeListener((v, focused) -> {
             checkFormat(focused, llmIpText, R.string.error_ip_format, ipFormat);
@@ -277,12 +280,19 @@ public class ConfigFragment extends Fragment {
     }
 
     private void checkFormat(boolean focusState, EditText editText, int errorMessageResource, String checkPattern){
-        if(focusState)
-            oldData = editText.getText().toString();
-        else {
-            if (!Pattern.compile(checkPattern).matcher(editText.getText().toString()).matches()) {
-                editText.setText(oldData);
-                Toast.makeText(getContext(), errorMessageResource, Toast.LENGTH_SHORT).show();
+        if (editText.getText().toString().isEmpty() || oldData == null) {
+            if (focusState)
+                oldData = editText.getText().toString();
+        } else {
+            if (focusState)
+                oldData = editText.getText().toString();
+            else {
+                if (!Pattern.compile(checkPattern).matcher(editText.getText().toString()).matches()) {
+                    editText.setText(oldData);
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), errorMessageResource, Toast.LENGTH_SHORT).show();
+                } else
+                    oldData = "";
             }
         }
     }
@@ -361,6 +371,8 @@ public class ConfigFragment extends Fragment {
         super.onPause();
         // Compare current settings with last saved to check for changes
         if (!searchingFile) {
+            // Check formats of all fields first to not save incorrect data
+            searchViews(root);
             if (fileManager.readFromFile("dbsettings.cfg") != null || fileManager.readFromFile("aisettings.cfg") != null) {
                 if (!fileManager.readFromFile("dbsettings.cfg").isEmpty() || !fileManager.readFromFile("aisettings.cfg").isEmpty()) {
                     if (!buildDbSettings().toString().equals(fileManager.readFromFile("dbsettings.cfg")) ||
@@ -388,6 +400,34 @@ public class ConfigFragment extends Fragment {
                         dialog.show();
                     }
                 }
+            }
+        }
+    }
+
+    public void searchViews(View view){
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            // If has child views, recursively search
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View child = group.getChildAt(i);
+                searchViews(child);
+            }
+        } else {
+            if (view instanceof EditText) {
+                EditText editText = (EditText) view;
+
+                String regex = "";
+                if (editText.getHint().toString().contains("IP"))
+                    regex = ipFormat;
+                else if (editText.getHint().toString().contains("Port"))
+                    regex = portFormat;
+                else if (editText.getHint().toString().contains("file"))
+                    regex = fileFormat;
+                else if (editText.getHint().toString().contains("API"))
+                    regex = apiFormat;
+
+                if (!regex.isEmpty())
+                    checkFormat(false, editText, R.string.error_format, regex);
             }
         }
     }
