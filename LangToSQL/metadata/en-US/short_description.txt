@@ -1,0 +1,1 @@
+AI assisted Android App that translates natural language to SQLite queries

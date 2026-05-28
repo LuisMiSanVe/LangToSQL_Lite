@@ -1,0 +1,11 @@
+LangToSQL Lite is a developer-driven Android app that lets you send queries or generate them using AI (compatible with either Google's Gemini AI via an API Key or with an LLM Server).
+
+Also, you can connect the app with a local LangToSQL REST API that you must setup in order to send queries to a PostgreSQL database instead.
+
+To use the SQLite functions, choose a SQLite database file from your device and create a map of its structure, this map is a JSON representation of the database, which the AI will use in order to create a functional query based on your request.
+
+From the Maps screen you can create maps, delete them or even change which map the AI is going to use on the next request (Be aware that the query can fail if the map doesn't have the same structure as the selected SQLite database!).
+
+For the AI, you can choose to use a Gemini API key or a LLM Server, for this last one, I recommend using LM Studio for the setup and using the specialized LangToSQL LLM model for it.
+
+When choosing to use the LangToSQL REST API instead, the rest of settings will be unabled, as the app's settings will be overwritten with the REST API's in order to generate queries and get results from a PostgreSQL database.

@@ -214,6 +214,7 @@ public class ConfigFragment extends Fragment {
             filePickerLauncher.launch(intent);
         });
         saveButton.setOnClickListener(v -> {
+            searchViews(root);
             if (useSQLite.isChecked() && (fileText.getText().toString().isEmpty()) ||
                 useApi.isChecked() && (apiIpText.getText().toString().isEmpty() || apiPortText.getText().toString().isEmpty()) ||
                 useGemini.isChecked() && (geminiKeyText.getText().toString().isEmpty()) ||
