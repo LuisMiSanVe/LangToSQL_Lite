@@ -15,6 +15,7 @@ import android.widget.*;
 import androidx.activity.result.*;
 import androidx.activity.result.contract.*;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.luismisanve.langtosql.*;
@@ -26,6 +27,7 @@ import java.util.regex.*;
 public class ConfigFragment extends Fragment {
     // Variables
     private FragmentConfigBinding binding;
+    private ScrollView scrollConfig;
     private RadioButton useSQLite;
     private EditText fileText;
     private ImageButton fileButton;
@@ -39,6 +41,13 @@ public class ConfigFragment extends Fragment {
     private EditText llmIpText;
     private EditText llmPortText;
     private EditText llmModelText;
+    private RadioButton useSystemTheme;
+    private RadioButton useClearTheme;
+    private RadioButton useDarkTheme;
+    private TextView linkIssue;
+    private TextView linkApi;
+    private TextView linkGithub;
+    private TextView linkMail;
     private ImageButton saveButton;
     private CheckBox showQueryCheck;
     private FileManager fileManager;
@@ -62,27 +71,31 @@ public class ConfigFragment extends Fragment {
         root = binding.getRoot();
 
         // Layout objects
-
+        scrollConfig = root.findViewById(R.id.scrollConfig);
         // DB Settings
-        // SQLite
         useSQLite = root.findViewById(R.id.useSQLite);
         fileText = root.findViewById(R.id.fileText);
         fileButton = root.findViewById(R.id.fileButton);
-        // API
         useApi = root.findViewById(R.id.useApi);
         apiIpText = root.findViewById(R.id.apiIpText);
         apiPortText = root.findViewById(R.id.apiPortText);
-
         // AI Settings
-        // Gemini
         useGemini = root.findViewById(R.id.useGemini);
         geminiKeyText = root.findViewById(R.id.geminiKeyText);
         showCheck = root.findViewById(R.id.showCheck);
-        // LLM
         useLLM = root.findViewById(R.id.useLLM);
         llmIpText = root.findViewById(R.id.llmIpText);
         llmPortText = root.findViewById(R.id.llmPortText);
         llmModelText = root.findViewById(R.id.llmModelText);
+        // Theme Settings
+        useSystemTheme = root.findViewById(R.id.useSystemTheme);
+        useClearTheme = root.findViewById(R.id.useClearTheme);
+        useDarkTheme = root.findViewById(R.id.useDarkTheme);
+        // Support Settings
+        linkIssue = root.findViewById(R.id.linkIssue);
+        linkApi = root.findViewById(R.id.linkApi);
+        linkGithub = root.findViewById(R.id.linkGithub);
+        linkMail = root.findViewById(R.id.linkMail);
 
         showQueryCheck = root.findViewById(R.id.showQueryCheck);
         saveButton = root.findViewById(R.id.saveButton);
@@ -93,6 +106,7 @@ public class ConfigFragment extends Fragment {
             try {
                 File db = new File(getContext().getFilesDir(), "dbsettings.cfg");
                 File ai = new File(getContext().getFilesDir(), "aisettings.cfg");
+                File theme = new File(getContext().getFilesDir(), "themesettings.cfg");
                 if (db.exists()) {
                     String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
                     if (Boolean.parseBoolean(dbConfig[0])) {
@@ -135,6 +149,21 @@ public class ConfigFragment extends Fragment {
                     if (!useGemini.isChecked() && !useLLM.isChecked()) {
                         useGemini.performClick();
                         useGemini.setChecked(true);
+                    }
+                }
+                if (theme.exists()){
+                    String[] themeConfig = fileManager.readFromFile("themesettings.cfg").split(";");
+                    if (Boolean.parseBoolean(themeConfig[0]))
+                        useSystemTheme.setChecked(Boolean.parseBoolean(themeConfig[0]));
+                    else if (Boolean.parseBoolean(themeConfig[1]))
+                        useClearTheme.setChecked(Boolean.parseBoolean(themeConfig[1]));
+                    else if (Boolean.parseBoolean(themeConfig[2]))
+                        useDarkTheme.setChecked(Boolean.parseBoolean(themeConfig[2]));
+                    else
+                        useSystemTheme.setChecked(true);
+                } else {
+                    if (!useSystemTheme.isChecked() && !useClearTheme.isChecked() && !useDarkTheme.isChecked()) {
+                        useSystemTheme.setChecked(true);
                     }
                 }
             } catch (NullPointerException e) {
@@ -226,8 +255,10 @@ public class ConfigFragment extends Fragment {
                 StringBuilder dbSettingsFormat = buildDbSettings();
                 StringBuilder aiSettingsFormat = buildAiSettings();
 
+
                 fileManager.writeToFile("dbsettings.cfg", dbSettingsFormat.toString());
                 fileManager.writeToFile("aisettings.cfg", aiSettingsFormat.toString());
+                saveTheme();
 
                 RunFragment.json = "";
                 RunFragment.selectedMap = "";
@@ -260,6 +291,39 @@ public class ConfigFragment extends Fragment {
         llmPortText.setOnFocusChangeListener((v, focused) -> {
             checkFormat(focused, llmPortText, R.string.error_port_format, portFormat);
         });
+        useSystemTheme.setOnClickListener(v -> {
+            saveTheme();
+            applyTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        });
+        useClearTheme.setOnClickListener(v -> {
+            saveTheme();
+            applyTheme(AppCompatDelegate.MODE_NIGHT_NO);
+        });
+        useDarkTheme.setOnClickListener(v -> {
+            saveTheme();
+            applyTheme(AppCompatDelegate.MODE_NIGHT_YES);
+        });
+        linkIssue.setOnClickListener(v -> {
+            String url = "https://github.com/LuisMiSanVe/LangToSQL_Lite/issues/new";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        });
+        linkApi.setOnClickListener(v -> {
+            String url = "https://github.com/LuisMiSanVe/LangToSQL_API/blob/main/README.md";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        });
+        linkGithub.setOnClickListener(v -> {
+            String url = "https://github.com/LuisMiSanVe/LangToSQL_Lite";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        });
+        linkMail.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"luis.miguel.sanve@gmail.com"});
+            startActivity(intent);
+        });
 
         return root;
     }
@@ -278,6 +342,12 @@ public class ConfigFragment extends Fragment {
                                     .append(llmIpText.getText()).append(";")
                                     .append(llmPortText.getText()).append(";")
                                     .append(llmModelText.getText());
+    }
+
+    private StringBuilder buildThemeSettings(){
+        return new StringBuilder().append(useSystemTheme.isChecked()).append(";")
+                .append(useClearTheme.isChecked()).append(";")
+                .append(useDarkTheme.isChecked());
     }
 
     private void checkFormat(boolean focusState, EditText editText, int errorMessageResource, String checkPattern){
@@ -431,6 +501,16 @@ public class ConfigFragment extends Fragment {
                     checkFormat(false, editText, R.string.error_format, regex);
             }
         }
+    }
+
+    public void saveTheme(){
+        StringBuilder themeSettingsFormat = buildThemeSettings();
+        fileManager.writeToFile("themesettings.cfg", themeSettingsFormat.toString());
+    }
+
+    public void applyTheme(int theme) {
+        AppCompatDelegate.setDefaultNightMode(theme);
+        scrollConfig.post(() -> scrollConfig.fullScroll(View.FOCUS_DOWN));
     }
 
     // Destroyer

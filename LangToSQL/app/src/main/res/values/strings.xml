@@ -21,6 +21,16 @@
     <string name="text_nodb">No database selected.</string>
     <string name="check_show">Show advanced run query fields</string>
     <string name="title_currentdb">Current database</string>
+    <string name="title_theme">Theme</string>
+    <string name="radio_system">Use the device theme</string>
+    <string name="radio_clear">Clear theme</string>
+    <string name="radio_dark">Dark theme</string>
+    <string name="title_support">Support</string>
+    <string name="link_issue">● Report a bug on the official Issues Tracker.</string>
+    <string name="link_api">● See the documentation of the LangToSQL REST API.</string>
+    <string name="link_github">● Check the source code on Github.</string>
+    <string name="link_mail">● Contact with me through this email.</string>
+
     <!--Run-->
     <string name="text_result">Send a query to get a result table.</string>
     <string name="error_load_sqlite">The configured SQLite database doesn\'t exist.</string>

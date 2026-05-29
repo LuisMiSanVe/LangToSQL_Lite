@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollConfig"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -203,6 +204,96 @@
 
         </RadioGroup>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/title_theme"
+            android:textSize="20sp"/>
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/outline_box"
+            android:padding="8dp"
+            android:saveEnabled="false">
+
+            <RadioButton
+                android:id="@+id/useSystemTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_system"/>
+
+            <RadioButton
+                android:id="@+id/useClearTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_clear"/>
+
+            <RadioButton
+                android:id="@+id/useDarkTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_dark"/>
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/title_support"
+            android:textSize="20sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/outline_box"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/linkIssue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/link_issue"
+                android:textColor="@color/violet_200"
+                android:padding="10dp"
+                android:autoLink="web"
+                android:linksClickable="true"/>
+
+            <TextView
+                android:id="@+id/linkApi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/link_api"
+                android:textColor="@color/violet_200"
+                android:padding="10dp"
+                android:autoLink="web"
+                android:linksClickable="true"/>
+
+            <TextView
+                android:id="@+id/linkGithub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/link_github"
+                android:textColor="@color/violet_200"
+                android:padding="10dp"
+                android:autoLink="web"
+                android:linksClickable="true"/>
+
+            <TextView
+                android:id="@+id/linkMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/link_mail"
+                android:textColor="@color/violet_200"
+                android:padding="10dp"
+                android:autoLink="email"
+                android:linksClickable="true"/>
+
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -231,6 +322,7 @@
                 android:background="@drawable/outline_box"
                 android:layout_marginTop="10dp"
                 android:padding="6dp"
+                android:layout_margin="2dp"
                 android:scaleType="centerInside"
                 android:clickable="true"
                 android:layout_gravity="end"/>

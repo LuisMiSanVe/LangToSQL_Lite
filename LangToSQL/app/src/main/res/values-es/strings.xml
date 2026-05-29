@@ -21,6 +21,15 @@
     <string name="text_nodb">No hay una base de datos seleccionada.</string>
     <string name="check_show">Mostrar campos de ejecución avanzada</string>
     <string name="title_currentdb">Base de datos actual</string>
+    <string name="title_theme">Tema</string>
+    <string name="radio_system">Usar tema del dispositivo</string>
+    <string name="radio_clear">Tema claro</string>
+    <string name="radio_dark">Tema oscuro</string>
+    <string name="title_support">Soporte</string>
+    <string name="link_issue">● Reporta un error en el Seguimiento oficial de incidencias.</string>
+    <string name="link_api">● Mira la documentación de la API REST de LangToSQL.</string>
+    <string name="link_github">● Revisa el código fuente en Github.</string>
+    <string name="link_mail">● Contactame a través de este correo.</string>
     <!--Run-->
     <string name="text_result">Manda una solicitud para obtener una tabla con resultados.</string>
     <string name="error_load_sqlite">La base de datos SQLite configurada no existe.</string>
