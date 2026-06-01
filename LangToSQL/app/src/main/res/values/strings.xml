@@ -52,6 +52,7 @@
     <string name="error_ai_save">No AI config was saved.</string>
     <string name="error_db_save">No Database config was saved.</string>
     <string name="warning_no_data">No results for this query.</string>
+    <string name="error_db_load">The database couldn\'t be loaded, retry later.</string>
     <!--Maps-->
     <string name="text_mapping">Mapping database…</string>
     <string name="text_mapped">The database has been mapped.</string>

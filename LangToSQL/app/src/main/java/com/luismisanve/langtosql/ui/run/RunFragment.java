@@ -412,30 +412,34 @@ public class RunFragment extends Fragment {
         runButton.setOnClickListener(v -> {
             Cursor cursor = null;
 
-            if (!file.isEmpty()) { // SQLite
-                SQLiteDatabase sqliteDb = SQLiteDatabase.openDatabase(
-                        file,
-                        null,
-                        SQLiteDatabase.OPEN_READONLY
-                );
-                try {
-                    cursor = sqliteDb.rawQuery(queryText.getText().toString(), null);
+            try {
+                if (!file.isEmpty()) { // SQLite
+                    SQLiteDatabase sqliteDb = SQLiteDatabase.openDatabase(
+                            file,
+                            null,
+                            SQLiteDatabase.OPEN_READONLY
+                    );
+                    try {
+                        cursor = sqliteDb.rawQuery(queryText.getText().toString(), null);
 
-                    runViewModel.setJson(cursorToJson(cursor));
+                        runViewModel.setJson(cursorToJson(cursor));
 
-                    buildTable(jsonToCursor(runViewModel.getJson()));
-                    sqliteDb.close();
-                } catch (SQLiteException e) {
-                    Toast.makeText(getContext(), getString(R.string.error_run_query) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                    queryLayout.setVisibility(VISIBLE);
-                } catch (Exception e) {
-                    Toast.makeText(getContext(), getString(R.string.error_run) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                }
+                        buildTable(jsonToCursor(runViewModel.getJson()));
+                        sqliteDb.close();
+                    } catch (SQLiteException e) {
+                        Toast.makeText(getContext(), getString(R.string.error_run_query) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                        queryLayout.setVisibility(VISIBLE);
+                    } catch (Exception e) {
+                        Toast.makeText(getContext(), getString(R.string.error_run) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    }
+                } else if (!apiIp.isEmpty())
+                    Toast.makeText(getContext(), R.string.warning_direct_run, Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getContext(), R.string.error_db_save, Toast.LENGTH_SHORT).show();
+            } catch (SQLiteCantOpenDatabaseException e) {
+                Toast.makeText(getContext(), R.string.error_db_load, Toast.LENGTH_SHORT).show();
+                queryLayout.setVisibility(VISIBLE);
             }
-            else if (!apiIp.isEmpty())
-                Toast.makeText(getContext(), R.string.warning_direct_run, Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(getContext(), R.string.error_db_save, Toast.LENGTH_SHORT).show();
         });
         configViewModel.getSavedOutside().observe(getViewLifecycleOwner(), saved ->{
             if (saved) {

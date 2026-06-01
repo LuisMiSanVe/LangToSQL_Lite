@@ -51,6 +51,7 @@
     <string name="error_ai_save">No se ha guardado ninguna configuración de IA.</string>
     <string name="error_db_save">No se ha guardado ninguna configuración de base de datos.</string>
     <string name="warning_no_data">La sentencia no devolvió resultados.</string>
+    <string name="error_db_load">La base de datos no se ha podido cargar, vuelva a intentarlo.</string>
     <!--Maps-->
     <string name="text_mapping">Mapeando base de datos…</string>
     <string name="text_mapped">La base de datos de ha mapeado.</string>
