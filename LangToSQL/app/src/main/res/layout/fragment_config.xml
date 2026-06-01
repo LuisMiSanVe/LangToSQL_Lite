@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:padding="8dp"
     tools:context=".ui.config.ConfigFragment"
+    android:layout_marginTop="80dp"
     android:layout_marginBottom="80dp">
 
     <LinearLayout

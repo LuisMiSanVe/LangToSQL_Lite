@@ -16,6 +16,7 @@ import androidx.activity.result.*;
 import androidx.activity.result.contract.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.luismisanve.langtosql.*;
@@ -69,6 +70,9 @@ public class ConfigFragment extends Fragment {
         configViewModel = new ViewModelProvider(requireActivity()).get(ConfigViewModel.class);
         binding = FragmentConfigBinding.inflate(inflater, container, false);
         root = binding.getRoot();
+
+        if (getActivity() != null)
+            WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), false);
 
         // Layout objects
         scrollConfig = root.findViewById(R.id.scrollConfig);
