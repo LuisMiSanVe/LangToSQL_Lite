@@ -10,6 +10,9 @@ import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.luismisanve.langtosql.*;
@@ -33,6 +36,7 @@ public class MapsFragment extends Fragment {
         View root = binding.getRoot();
 
         // Layout Objects
+        FrameLayout layoutMap = root.findViewById(R.id.layoutMap);
         TextView currentDbMapText = root.findViewById(R.id.currentDbMapText);
         ImageButton mapButton = root.findViewById(R.id.mapButton);
         mapsLayout = root.findViewById(R.id.mapsLayout);
@@ -87,13 +91,23 @@ public class MapsFragment extends Fragment {
             Toast.makeText(getContext(), R.string.error_data, Toast.LENGTH_SHORT).show();
         }
 
+        root.post(() -> {
+            View nav = null;
+            if (getActivity() != null) {
+                WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), false);
+                nav = getActivity().findViewById(R.id.nav_view);
+            }
+            if (nav != null)
+                layoutMap.setPadding(layoutMap.getPaddingLeft(), layoutMap.getPaddingTop(), layoutMap.getPaddingRight(), layoutMap.getPaddingBottom() + nav.getHeight());
+        });
+
         // Events
         mapButton.setOnClickListener(v -> {
-
             String map = "";
             if (!currentDb.isEmpty()) {
                 Toast.makeText(getContext(), R.string.text_mapping, Toast.LENGTH_SHORT).show();
-                map = mapManager.mapDatabase(getContext());
+                if (getContext() != null)
+                    map = mapManager.mapDatabase(getContext());
 
                 if (!map.isEmpty()) {
                     fileManager.writeToFile(currentDb + ".map", map);
@@ -106,7 +120,8 @@ public class MapsFragment extends Fragment {
         configViewModel.getSavedOutside().observe(getViewLifecycleOwner(), saved ->{
             if (saved) {
                 configViewModel.setSavedOutside(false);
-                getActivity().recreate();
+                if (getActivity() != null)
+                    getActivity().recreate();
             }
         });
 
@@ -172,6 +187,17 @@ public class MapsFragment extends Fragment {
             Toast.makeText(getContext(), R.string.error_data, Toast.LENGTH_SHORT).show();
             mapsLayout.removeAllViews();
         }
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Window window = requireActivity().getWindow();
+        View view = requireView();
+        WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(window, view);
+
+        if (controller != null)
+            controller.hide(WindowInsetsCompat.Type.ime());
     }
 
     // Destroyer

@@ -78,4 +78,7 @@
     <string name="error_gemini_format">La clave de API de Gemini no tiene un formato válido.</string>
     <string name="error_file_internal">Un error interno de los ficheros ocurrió: </string>
     <string name="error_format">Los campos con formato incorrecto se han vaciado.</string>
+    <string name="text_restart">Guardar y reiniciar</string>
+    <string name="text_theme">Cambiar tema</string>
+    <string name="warning_theme">Necesitas reiniciar la app para aplicar el tema, ¿quieres guardar?\nEs posible que no se guarde si no has rellenado las secciones seleccionadas.</string>
 </resources>

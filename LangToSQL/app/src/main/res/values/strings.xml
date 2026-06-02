@@ -79,4 +79,7 @@
     <string name="error_gemini_format">The Gemini API Key doesn\'t have a valid format.</string>
     <string name="error_file_internal">An internal file error occurred: </string>
     <string name="error_format">Wrong formatted fields where emptied.</string>
+    <string name="text_restart">Save &amp; restart</string>
+    <string name="text_theme">Change theme</string>
+    <string name="warning_theme">You need to restart in order to apply the selected theme, do you want to save your data?\nData may not save if selected sections aren\'t fully filled.</string>
 </resources>

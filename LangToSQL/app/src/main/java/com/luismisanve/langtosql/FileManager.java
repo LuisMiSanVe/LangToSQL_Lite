@@ -107,31 +107,33 @@ public class FileManager {
                     int ivLength = fis.read();
 
                     // Read IV
-                    byte[] iv = new byte[ivLength];
-                    fis.read(iv);
+                    if (ivLength > 0) {
+                        byte[] iv = new byte[ivLength];
+                        fis.read(iv);
 
-                    // Read encrypted bytes
-                    byte[] encryptedData = new byte[fis.available()];
-                    fis.read(encryptedData);
+                        // Read encrypted bytes
+                        byte[] encryptedData = new byte[fis.available()];
+                        fis.read(encryptedData);
 
-                    Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+                        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
 
-                    GCMParameterSpec spec =
-                            new GCMParameterSpec(128, iv);
+                        GCMParameterSpec spec =
+                                new GCMParameterSpec(128, iv);
 
-                    cipher.init(
-                            Cipher.DECRYPT_MODE,
-                            secretKey,
-                            spec
-                    );
+                        cipher.init(
+                                Cipher.DECRYPT_MODE,
+                                secretKey,
+                                spec
+                        );
 
-                    byte[] decryptedData =
-                            cipher.doFinal(encryptedData);
+                        byte[] decryptedData =
+                                cipher.doFinal(encryptedData);
 
-                    return new String(
-                            decryptedData,
-                            StandardCharsets.UTF_8
-                    );
+                        return new String(
+                                decryptedData,
+                                StandardCharsets.UTF_8
+                        );
+                    }
                 }
 
             } catch (Exception e) {

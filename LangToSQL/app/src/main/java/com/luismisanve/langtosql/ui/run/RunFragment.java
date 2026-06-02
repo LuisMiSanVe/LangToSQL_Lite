@@ -11,6 +11,7 @@ import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.*;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
@@ -53,6 +54,7 @@ public class RunFragment extends Fragment {
         View root = binding.getRoot();
 
         // Layout Objects
+        FrameLayout layoutRun = root.findViewById(R.id.layoutRun);
         requestText = root.findViewById(R.id.requestText);
         ImageButton sendButton = root.findViewById(R.id.sendButton);
         queryLayout = root.findViewById(R.id.queryLayout);
@@ -72,7 +74,7 @@ public class RunFragment extends Fragment {
                 if (db.exists()) {
                     String[] dbConfig = fileManager.readFromFile("dbsettings.cfg").split(";");
 
-                    if (Boolean.parseBoolean(dbConfig[0])) {
+                    if (dbConfig.length > 0 && Boolean.parseBoolean(dbConfig[0])) {
                         Object path = null;
                         if (!dbConfig[1].isEmpty()) {
                             Uri uri = Uri.parse(dbConfig[1]);
@@ -145,7 +147,7 @@ public class RunFragment extends Fragment {
                 if (ai.exists()) {
                     String[] aiConfig = fileManager.readFromFile("aisettings.cfg").split(";");
 
-                    if (Boolean.parseBoolean(aiConfig[0])) {
+                    if (aiConfig.length > 0 && Boolean.parseBoolean(aiConfig[0])) {
                         geminiKey = aiConfig[1];
                         llmIp = "";
                         llmPort = "";
@@ -175,6 +177,16 @@ public class RunFragment extends Fragment {
         String priorMap = runViewModel.getMap();
         if (!json.isEmpty() && priorMap != null)
             json = priorMap;
+
+        root.post(() -> {
+            View nav = null;
+            if (getActivity() != null) {
+                WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), false);
+                nav = getActivity().findViewById(R.id.nav_view);
+            }
+            if (nav != null)
+                layoutRun.setPadding(layoutRun.getPaddingLeft(), layoutRun.getPaddingTop(), layoutRun.getPaddingRight(), layoutRun.getPaddingBottom() + nav.getHeight());
+        });
 
         // Events
         sendButton.setOnClickListener(v -> {
@@ -647,6 +659,17 @@ public class RunFragment extends Fragment {
         imageBack.setLayoutParams(params);
         imageBack.setTranslationZ(transZ);
         imageBack.setScaleType(scaleType);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Window window = requireActivity().getWindow();
+        View view = requireView();
+        WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(window, view);
+
+        if (controller != null)
+            controller.hide(WindowInsetsCompat.Type.ime());
     }
 
     // Destroyer

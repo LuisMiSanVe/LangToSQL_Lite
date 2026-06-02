@@ -1,13 +1,20 @@
 package com.luismisanve.langtosql;
 
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.widget.ScrollView;
+import android.widget.Toast;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.appcompat.app.*;
+import androidx.core.graphics.Insets;
+import androidx.core.view.*;
+import androidx.navigation.*;
+import androidx.navigation.ui.*;
 import com.luismisanve.langtosql.databinding.ActivityMainBinding;
 import java.io.File;
 
@@ -39,16 +46,36 @@ public class MainActivity extends AppCompatActivity {
 
         if (theme.exists()){
             String[] themeConfig = fileManager.readFromFile("themesettings.cfg").split(";");
-            if (Boolean.parseBoolean(themeConfig[0]))
+            if (themeConfig.length > 0 && Boolean.parseBoolean(themeConfig[0]))
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-            else if (Boolean.parseBoolean(themeConfig[1]))
+            else if (themeConfig.length > 1 && Boolean.parseBoolean(themeConfig[1]))
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            else if (Boolean.parseBoolean(themeConfig[2]))
+            else if (themeConfig.length > 2 && Boolean.parseBoolean(themeConfig[2]))
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             else
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         }
+
+
+
+        // Set Insets
+        View root = findViewById(android.R.id.content);
+
+        // Events
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            // System bar
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            v.setPadding(
+                    v.getPaddingLeft(),
+                    bars.top,
+                    v.getPaddingRight(),
+                    v.getPaddingBottom()
+            );
+
+            return insets;
+        });
     }
 }

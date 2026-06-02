@@ -17,6 +17,8 @@ import androidx.activity.result.contract.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.luismisanve.langtosql.*;
@@ -70,9 +72,6 @@ public class ConfigFragment extends Fragment {
         configViewModel = new ViewModelProvider(requireActivity()).get(ConfigViewModel.class);
         binding = FragmentConfigBinding.inflate(inflater, container, false);
         root = binding.getRoot();
-
-        if (getActivity() != null)
-            WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), false);
 
         // Layout objects
         scrollConfig = root.findViewById(R.id.scrollConfig);
@@ -155,24 +154,18 @@ public class ConfigFragment extends Fragment {
                         useGemini.setChecked(true);
                     }
                 }
-                if (theme.exists()){
-                    String[] themeConfig = fileManager.readFromFile("themesettings.cfg").split(";");
-                    if (Boolean.parseBoolean(themeConfig[0]))
-                        useSystemTheme.setChecked(Boolean.parseBoolean(themeConfig[0]));
-                    else if (Boolean.parseBoolean(themeConfig[1]))
-                        useClearTheme.setChecked(Boolean.parseBoolean(themeConfig[1]));
-                    else if (Boolean.parseBoolean(themeConfig[2]))
-                        useDarkTheme.setChecked(Boolean.parseBoolean(themeConfig[2]));
-                    else
-                        useSystemTheme.setChecked(true);
-                } else {
-                    if (!useSystemTheme.isChecked() && !useClearTheme.isChecked() && !useDarkTheme.isChecked()) {
-                        useSystemTheme.setChecked(true);
-                    }
-                }
+                loadTheme(theme);
             } catch (NullPointerException e) {
                 Toast.makeText(getContext(), R.string.error_data, Toast.LENGTH_SHORT).show();
             }
+
+            View nav = null;
+            if (getActivity() != null) {
+                WindowCompat.setDecorFitsSystemWindows(getActivity().getWindow(), false);
+                nav = getActivity().findViewById(R.id.nav_view);
+            }
+            if (nav != null)
+                scrollConfig.setPadding(scrollConfig.getPaddingLeft(), scrollConfig.getPaddingTop(), scrollConfig.getPaddingRight(), scrollConfig.getPaddingBottom() + nav.getHeight());
         });
 
         // Events
@@ -296,15 +289,12 @@ public class ConfigFragment extends Fragment {
             checkFormat(focused, llmPortText, R.string.error_port_format, portFormat);
         });
         useSystemTheme.setOnClickListener(v -> {
-            saveTheme();
             applyTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         });
         useClearTheme.setOnClickListener(v -> {
-            saveTheme();
             applyTheme(AppCompatDelegate.MODE_NIGHT_NO);
         });
         useDarkTheme.setOnClickListener(v -> {
-            saveTheme();
             applyTheme(AppCompatDelegate.MODE_NIGHT_YES);
         });
         linkIssue.setOnClickListener(v -> {
@@ -441,9 +431,18 @@ public class ConfigFragment extends Fragment {
         searchingFile = false;
     }
 
+
     @Override
     public void onPause(){
         super.onPause();
+        // Hide keyboard
+        Window window = requireActivity().getWindow();
+        View view = requireView();
+        WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(window, view);
+
+        if (controller != null)
+            controller.hide(WindowInsetsCompat.Type.ime());
+
         // Compare current settings with last saved to check for changes
         if (!searchingFile) {
             // Check formats of all fields first to not save incorrect data
@@ -513,8 +512,58 @@ public class ConfigFragment extends Fragment {
     }
 
     public void applyTheme(int theme) {
-        AppCompatDelegate.setDefaultNightMode(theme);
-        scrollConfig.post(() -> scrollConfig.fullScroll(View.FOCUS_DOWN));
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.text_theme)
+                .setMessage(R.string.warning_theme)
+                .setPositiveButton(R.string.text_restart, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveButton.performClick();
+                        saveTheme();
+                        AppCompatDelegate.setDefaultNightMode(theme);
+
+                        if (getActivity() != null) {
+                            Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage(getActivity().getPackageName());
+                            if (intent != null) {
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                        | Intent.FLAG_ACTIVITY_NEW_TASK
+                                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                                startActivity(intent);
+                                getActivity().finish();
+                                System.exit(0);
+                            }
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.text_discard, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        if (getContext() != null)
+                            loadTheme(new File(getContext().getFilesDir(), "themesettings.cfg"));
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public void loadTheme(File theme){
+        if (theme.exists()){
+            String[] themeConfig = fileManager.readFromFile("themesettings.cfg").split(";");
+            if (themeConfig.length > 0 && Boolean.parseBoolean(themeConfig[0]))
+                useSystemTheme.setChecked(Boolean.parseBoolean(themeConfig[0]));
+            else if (themeConfig.length > 1 && Boolean.parseBoolean(themeConfig[1]))
+                useClearTheme.setChecked(Boolean.parseBoolean(themeConfig[1]));
+            else if (themeConfig.length > 2 && Boolean.parseBoolean(themeConfig[2]))
+                useDarkTheme.setChecked(Boolean.parseBoolean(themeConfig[2]));
+            else
+                useSystemTheme.setChecked(true);
+        } else {
+            if (!useSystemTheme.isChecked() && !useClearTheme.isChecked() && !useDarkTheme.isChecked()) {
+                useSystemTheme.setChecked(true);
+            }
+        }
     }
 
     // Destroyer
