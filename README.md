@@ -8,6 +8,7 @@
 [![image](https://img.shields.io/badge/json-5E5C5C?style=for-the-badge&logo=json&logoColor=white)](https://www.newtonsoft.com/json)
 [![image](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://aistudio.google.com/app/apikey)
 [![image](https://img.shields.io/badge/Android_Studio-3DDC84?style=for-the-badge&logo=android-studio&logoColor=white)](https://developer.android.com/studio)
+[![Google Play](https://img.shields.io/badge/Google%20Play%20Store-%23ffffff.svg?style=for-the-badge&logo=Google%20Play&logoColor=3aaa58)](https://play.google.com/store/apps/dev?id=8302426077898344904&pli=1)
 
 >[!NOTE]
 > Check out other versions of this program:
@@ -39,6 +40,10 @@ Simply put that data you just got into the settings in the app.
 This method maps the database structure into a JSON that the AI analyzes ([with this prompt](https://gist.github.com/LuisMiSanVe/b189c8920d2dcedf5fd46485f3403d51)) to create an SQL query, which is then run on the SQLite Database, returning the requested data.  
 Since this method does not map the database values, token usage is lower, and the data is more reliable since it directly comes from the SQLite Database. However, it does not completely prevent AI-generated errors. Occasionally, the SQL query might fail due to non-existing columns, in which case you should check the generated query to detect the error.
 
+You can check the privacy policy of the app [here](https://www.termsfeed.com/live/7daa1fe4-2417-4194-81db-d0e47cc58655).
+
+Download the app from the [Google Play Store](https://play.google.com/store/apps/details?id=com.luismisanve.langtosql) or the [Releases](https://github.com/LuisMiSanVe/LangToSQL_Lite/releases).
+
 ## 🎨 Customization Options
 The app has a `Config screen` that allows the user to setup the app.
 
@@ -49,6 +54,9 @@ The settings are separated in two blocks:
 
 - **AI Settings**\
   You can choose to use the Gemini API or a local LLM Server.
+
+- **Theme**\
+  The app has three theme modes: clear, dark and follow the device's.
 
 You can also enable the direct run query fields to write your own SELECT queries and execute them in the SQLite Database. 
 
@@ -73,4 +81,5 @@ The version number will follow this format: \
   - Images (Icons source, later retouched by me):
     - [FreeIcons](https://freeicons.io/)
     - [Depositphotos](https://depositphotos.com/vector/coarse-halftone-dots-pattern-gradient-in-vector-format-82396024.html)
+  - [TermsFeed](https://www.termsfeed.com/)
 - Recommended IDE: [Android Studio](https://developer.android.com/studio)

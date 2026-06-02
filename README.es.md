@@ -8,6 +8,7 @@
 [![image](https://img.shields.io/badge/json-5E5C5C?style=for-the-badge&logo=json&logoColor=white)](https://www.newtonsoft.com/json)
 [![image](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://aistudio.google.com/app/apikey)
 [![image](https://img.shields.io/badge/Android_Studio-3DDC84?style=for-the-badge&logo=android-studio&logoColor=white)](https://developer.android.com/studio)
+[![Google Play](https://img.shields.io/badge/Google%20Play%20Store-%23ffffff.svg?style=for-the-badge&logo=Google%20Play&logoColor=3aaa58)](https://play.google.com/store/apps/dev?id=8302426077898344904&pli=1)
 
 >[!NOTE]
 > Dale un vistazo a las otras versiones del programa:
@@ -39,6 +40,10 @@ Simplemente pon los datos que acabas de conseguir en las pantallas de configurac
 Este método mapea la estructura de la base de datos en un JSON que la IA analiza ([con este prompt](https://gist.github.com/LuisMiSanVe/b189c8920d2dcedf5fd46485f3403d51)) para crear una consulta SQL, la cual es ejecutada en la base de datos SQLite directamente.  
 Ya que este método no mapea los valores de la base de datos el uso de tokens es menor, y los datos que devuelve son mas fiables pues es el mismo Servidor el que los devuelve. Sin embargo, no evita completamente los errores que cometa la IA. A veces, la consulta SQL fallará debido a que la IA inventa columnas que no existen, en ese caso deberás comprobar la consulta generada para que identifiques el fallo.
 
+Puedes revisar las políticas de privacidad de la aplicación [aquí](https://www.termsfeed.com/live/7daa1fe4-2417-4194-81db-d0e47cc58655).
+
+Descarga la app desde la [Google Play Store](https://play.google.com/store/apps/details?id=com.luismisanve.langtosql) o desde los [Lanzamientos](https://github.com/LuisMiSanVe/LangToSQL_Lite/releases).
+
 ## 🎨 Opciones de Personalización
 La app tiene una `pantalla de Ajustes` que permite al usuario configurar la aplicación.
 
@@ -49,6 +54,9 @@ Los ajustes están separados en dos bloques:
 
 - **Ajustes de IA**\
   Puedes elegir si bien usar la API de Gemini o un servidor local de LLMs.
+
+- **Tema**\
+  La aplicación tiene tres modos de temas: claro, oscuro y usar el tema del dispositivo.
 
 Tambíen puedes activar los campos de sentencia directa, donde puedes escribir tus propios SELECT y ejecutarlos en la base de datos SQLite. 
 
@@ -70,7 +78,8 @@ El número de la versión seguirá este formato: \
   - [SQLite](https://sqlite.org/) 
   - [LM Studio](https://lmstudio.ai/)
   - Gemini API Key (2.0 Flash)
-- Imagenes (Fuente original de los iconos, luego retocados por mí):
+  - Imagenes (Fuente original de los iconos, luego retocados por mí):
     - [FreeIcons](https://freeicons.io/)
     - [Depositphotos](https://depositphotos.com/vector/coarse-halftone-dots-pattern-gradient-in-vector-format-82396024.html)
+  - [TermsFeed](https://www.termsfeed.com/)
 - IDE Recomendado: [Android Studio](https://developer.android.com/studio)
