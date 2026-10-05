@@ -45,6 +45,7 @@ public class RunFragment extends Fragment {
     public static int showQuery = GONE;
     public static String selectedMap = "";
     public static String json = "";
+    public static String geminiModel = "3.8-flash";
 
     // Initializer
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -236,7 +237,7 @@ public class RunFragment extends Fragment {
 
                 if (!geminiKey.isEmpty()) {
                     endpoint = "https://generativelanguage.googleapis.com";
-                    requestUri = "/v1beta/models/gemini-2.5-flash:generateContent?key=" + geminiKey;
+                    requestUri = "/v1beta/models/gemini-" + geminiModel + ":generateContent?key=" + geminiKey;
 
                     try {
                         JSONObject part = new JSONObject();

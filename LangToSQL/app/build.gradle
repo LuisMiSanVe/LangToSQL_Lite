@@ -4,14 +4,16 @@ plugins {
 
 android {
     namespace 'com.luismisanve.langtosql'
+    //noinspection GradleDependency
     compileSdk 36
 
     defaultConfig {
         applicationId "com.luismisanve.langtosql"
         minSdk 23
+        //noinspection OldTargetApi
         targetSdk 36
-        versionCode 111
-        versionName "1.1.1"
+        versionCode 120
+        versionName "1.2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -30,7 +30,13 @@
     <string name="link_api">● See the documentation of the LangToSQL REST API.</string>
     <string name="link_github">● Check the source code on Github.</string>
     <string name="link_mail">● Contact with me through this email.</string>
-
+    <string-array name="spinner_items">
+        <item>3.8-flash</item>
+        <item>3.5-flash</item>
+        <item>3.5-flash-lite</item>
+        <item>2.5-flash</item>
+        <item>2.5-flash-lite</item>
+    </string-array>
     <!--Run-->
     <string name="text_result">Send a query to get a result table.</string>
     <string name="error_load_sqlite">The configured SQLite database doesn\'t exist.</string>

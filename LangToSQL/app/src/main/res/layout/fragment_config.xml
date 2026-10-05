@@ -125,6 +125,13 @@
                 android:orientation="vertical"
                 android:padding="4dp">
 
+                <Spinner
+                    android:id="@+id/geminiModel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:entries="@array/spinner_items" />
+
                 <EditText
                     android:id="@+id/geminiKeyText"
                     android:inputType="textPassword"

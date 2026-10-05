@@ -38,6 +38,7 @@ public class ConfigFragment extends Fragment {
     private EditText apiIpText;
     private EditText apiPortText;
     private RadioButton useGemini;
+    private Spinner geminiModel;
     private EditText geminiKeyText;
     private CheckBox showCheck;
     private RadioButton useLLM;
@@ -84,6 +85,7 @@ public class ConfigFragment extends Fragment {
         apiPortText = root.findViewById(R.id.apiPortText);
         // AI Settings
         useGemini = root.findViewById(R.id.useGemini);
+        geminiModel = root.findViewById(R.id.geminiModel);
         geminiKeyText = root.findViewById(R.id.geminiKeyText);
         showCheck = root.findViewById(R.id.showCheck);
         useLLM = root.findViewById(R.id.useLLM);
@@ -212,6 +214,16 @@ public class ConfigFragment extends Fragment {
             llmModelText.setEnabled(false);
 
             geminiKeyText.requestFocus();
+        });
+        geminiModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                RunFragment.geminiModel = parent.getItemAtPosition(position).toString();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                RunFragment.geminiModel = "3.8-flash";
+            }
         });
         showCheck.setOnCheckedChangeListener((v, checked) -> {
             if (checked)
